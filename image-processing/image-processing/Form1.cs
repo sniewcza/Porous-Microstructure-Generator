@@ -16,5 +16,13 @@ namespace image_processing
         {
             InitializeComponent();
         }
+
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(ImageFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox1.Image = Bitmap.FromFile(ImageFileDialog.FileName);
+            }
+        }
     }
 }
