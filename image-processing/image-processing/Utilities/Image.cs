@@ -24,11 +24,10 @@ namespace image_processing.Utilities
             }
         }
         public Bitmap ProcessingImage { get; internal set; }
-        public IImageProcessor Processor { get => _processor; }
-        IImageProcessor _processor;
-        public Image(IImageProcessor processor)
+              
+        public Image()
         {
-            _processor = processor;
+            
         }
     }
 }
