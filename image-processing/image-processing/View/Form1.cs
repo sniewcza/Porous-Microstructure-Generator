@@ -49,11 +49,18 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var form = new Form2();
-                form.ShowDialog();
-                var bmp = _processor.Binarization(_image.ViewImage,128);
-                _image.ProcessingImage = bmp;
-                _image.ViewImage = bmp;
+                var form = new ThresholdInputBox(_image.OriginalImage);
+                form.ThresholdChanged += (textbox, args) =>
+                {
+                    int threshold = Convert.ToInt32((textbox as MaskedTextBox).Text);
+                   form.PictureBox1.Image = _image.ProcessingImage = _processor.Binarization(_image.OriginalImage, threshold);
+                };
+               if( form.ShowDialog() == DialogResult.OK)
+                {
+                    _image.ViewImage = (_image.ProcessingImage.Clone() as Bitmap);
+                }
+                
+               
             }
         }
 

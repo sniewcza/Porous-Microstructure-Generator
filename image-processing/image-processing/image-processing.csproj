@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Utilities\ShapeAnalyzer.cs" />
     <Compile Include="View\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,11 +66,11 @@
     <Compile Include="Utilities\IImageProcessor.cs" />
     <Compile Include="Utilities\Image.cs" />
     <Compile Include="Utilities\ImageProcessor.cs" />
-    <Compile Include="View\Form2.cs">
+    <Compile Include="View\ThresholdInputBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <Compile Include="View\ThresholdInputBox.Designer.cs">
+      <DependentUpon>ThresholdInputBox.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="View\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -83,8 +84,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="View\Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <EmbeddedResource Include="View\ThresholdInputBox.resx">
+      <DependentUpon>ThresholdInputBox.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
