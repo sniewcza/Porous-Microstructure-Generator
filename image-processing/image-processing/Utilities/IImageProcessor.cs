@@ -16,5 +16,6 @@ namespace image_processing.Utilities
         Bitmap Closing(Bitmap bitmap);
         Bitmap Skeletonization(Bitmap bitmap);
         Bitmap ReverseBitmapColors(Bitmap bitmap);
+        Bitmap FindShapes(Bitmap bitmap);
     }
 }

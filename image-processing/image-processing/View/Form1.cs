@@ -59,24 +59,18 @@ namespace image_processing
                 {
                     _image.ViewImage = (_image.ProcessingImage.Clone() as Bitmap);
                 }
-                
-               
+
+                form.Dispose();
             }
         }
 
-        private void testToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (_image.OriginalImage != null)
-            {
-                _image.ViewImage = _processor.ReverseBitmapColors(_image.ViewImage);
-            }
-        }
+       
 
         private void erosionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Erosion(_image.ViewImage);
+                var bmp = _processor.Erosion(_image.ProcessingImage);
                 _image.ViewImage = bmp;
                 _image.ProcessingImage = bmp;
             }
@@ -86,7 +80,7 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Dilatation(_image.ViewImage);
+                var bmp = _processor.Dilatation(_image.ProcessingImage);
                 _image.ViewImage = bmp;
                 _image.ProcessingImage = bmp;
             }
@@ -96,7 +90,7 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Opening(_image.ViewImage);
+                var bmp = _processor.Opening(_image.ProcessingImage);
                 _image.ViewImage = bmp;
                 _image.ProcessingImage = bmp;
             }
@@ -106,7 +100,7 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Closing(_image.ViewImage);
+                var bmp = _processor.Closing(_image.ProcessingImage);
                 _image.ViewImage = bmp;
                 _image.ProcessingImage = bmp;
             }
@@ -116,7 +110,7 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Skeletonization(_image.ViewImage);
+                var bmp = _processor.Skeletonization(_image.ProcessingImage);
                 _image.ViewImage = bmp;
                 _image.ProcessingImage = bmp;
             }
@@ -129,6 +123,28 @@ namespace image_processing
                 var bmp = _image.OriginalImage;
                 _image.ViewImage = bmp;
                 _image.ProcessingImage = bmp;
+            }
+        }
+
+        private void blobDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_image.OriginalImage != null)
+            {
+                var bmp = _processor.FindShapes(_image.ProcessingImage);
+                _image.ViewImage = bmp;
+               // _image.ProcessingImage = bmp;
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = "bmp";
+            if(saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                _image.ViewImage.Save(saveFileDialog.FileName);
             }
         }
     }

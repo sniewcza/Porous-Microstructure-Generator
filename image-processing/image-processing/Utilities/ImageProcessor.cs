@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using AForge.Imaging;
 using AForge.Imaging.Filters;
 namespace image_processing.Utilities
 {
@@ -39,6 +40,35 @@ namespace image_processing.Utilities
 
             return filter.Apply(bitmap);
         }
+      
+        public Bitmap FindShapes(Bitmap bitmap)
+        {
+            BlobCounter blobCounter = new BlobCounter(ReverseBitmapColors( bitmap));
+
+            var bmp = CreateUnindexedBitmap(bitmap);
+           
+            var blobs = blobCounter.GetObjectsInformation();
+
+            // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+            var g = Graphics.FromImage(bmp);
+
+            foreach(var blob in blobs)
+            {
+                foreach(Point p in blobCounter.GetBlobsEdgePoints(blob).Select(p=> new Point(p.X,p.Y)).ToArray())
+                {
+                    g.DrawEllipse(new Pen(Color.OrangeRed), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+                }
+            }
+            //Parallel.For(0, blobs.Length;, (index) =>
+            //    {                   
+            //       Drawing.Rectangle(bitmapdata, blobs[index].Rectangle, Color.Orange);                   
+            //    });            
+
+            //bmp.UnlockBits(bitmapdata);
+
+            return bmp;
+        }
 
         public Bitmap Opening(Bitmap bitmap)
         {
@@ -68,6 +98,36 @@ namespace image_processing.Utilities
             newbmp.UnlockBits(bitmapdata);
             return newbmp;
 
+        }
+
+        private Bitmap CreateUnindexedBitmap(Bitmap original)
+        {
+            var unindexedbmp = new Bitmap(original.Width, original.Height);
+
+            var originalbmpData = original.LockBits(new Rectangle(0, 0, original.Width, original.Height), ImageLockMode.ReadOnly, original.PixelFormat);
+
+            var unindexedbmpData = unindexedbmp.LockBits(new Rectangle(0, 0, original.Width, original.Height), ImageLockMode.ReadWrite, original.PixelFormat);
+
+            var originalbmpptr = originalbmpData.Scan0;
+
+            var unindexedbmpptr = unindexedbmpData.Scan0;
+
+            int bytes = Math.Abs(originalbmpData.Stride) * original.Height;
+
+            byte[] rgbValues = new byte[bytes];
+
+            Marshal.Copy(originalbmpptr, rgbValues, 0, bytes);
+
+            Marshal.Copy(rgbValues, 0, unindexedbmpptr, bytes);
+
+            original.UnlockBits(originalbmpData);
+
+            unindexedbmp.UnlockBits(unindexedbmpData);
+
+            //for (int i = 0; i < original.Width; i++)
+            //    for (int j = 0; j < original.Height; j++)
+            //        unindexedbmp.SetPixel(i, j, original.GetPixel(i, j));
+            return unindexedbmp;
         }
 
         public Bitmap Skeletonization(Bitmap bitmap)
