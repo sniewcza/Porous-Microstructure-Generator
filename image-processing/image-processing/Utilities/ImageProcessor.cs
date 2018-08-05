@@ -4,14 +4,16 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using AForge.Imaging;
 using AForge.Imaging.Filters;
+using AForge.Math.Geometry;
 namespace image_processing.Utilities
 {
     class ImageProcessor : IImageProcessor
     {
+        private Blob[] _blobs;
+
         public Bitmap Binarization(Bitmap bitmap, int threshold)
         {
             Threshold filter = new Threshold(threshold);
@@ -41,24 +43,57 @@ namespace image_processing.Utilities
             return filter.Apply(bitmap);
         }
       
+        public Bitmap getBlobAtPixel(int x,int y)
+        {
+            var bmp = _blobs?.FirstOrDefault((blob) => blob.Rectangle.Contains(x, y))?.Image.ToManagedImage();
+
+            return bmp != null ? ReverseBitmapColors(bmp) : null;
+        }
         public Bitmap FindShapes(Bitmap bitmap)
         {
-            BlobCounter blobCounter = new BlobCounter(ReverseBitmapColors( bitmap));
+            var reversedbmp = ReverseBitmapColors(bitmap);
+            BlobCounter blobCounter = new BlobCounter(reversedbmp);
 
             var bmp = CreateUnindexedBitmap(bitmap);
-           
-            var blobs = blobCounter.GetObjectsInformation();
 
+            
+            _blobs = blobCounter.GetObjects(reversedbmp, false);
+            
+            
             // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
 
+            SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
             var g = Graphics.FromImage(bmp);
 
-            foreach(var blob in blobs)
+            shapeChecker.MinAcceptableDistortion = 0.5f;
+            shapeChecker.RelativeDistortionLimit = 0.07f;
+            foreach (var blob in _blobs)
             {
-                foreach(Point p in blobCounter.GetBlobsEdgePoints(blob).Select(p=> new Point(p.X,p.Y)).ToArray())
+                
+                var edgePoints = blobCounter.GetBlobsEdgePoints(blob);
+                var points = edgePoints.Select(p => new Point(p.X, p.Y)).ToArray();
+                switch(shapeChecker.CheckShapeType(edgePoints))
                 {
-                    g.DrawEllipse(new Pen(Color.OrangeRed), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+                    case ShapeType.Circle:
+                        foreach (Point p in points)                       
+                            g.DrawEllipse(new Pen(Color.Red), p.X - 1, p.Y - 1, 0.5f, 0.5f);                       
+                        break;
+                    case ShapeType.Quadrilateral:
+                        foreach (Point p in points)
+                            g.DrawEllipse(new Pen(Color.Orange), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+                        break;
+                    case ShapeType.Triangle:
+                        foreach (Point p in points)
+                            g.DrawEllipse(new Pen(Color.Purple), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+                        break;
+                    case ShapeType.Unknown:
+                        foreach (Point p in points)
+                            g.DrawEllipse(new Pen(Color.Brown), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+                        break;
                 }
+               
+               
+                
             }
             //Parallel.For(0, blobs.Length;, (index) =>
             //    {                   
@@ -100,7 +135,7 @@ namespace image_processing.Utilities
 
         }
 
-        private Bitmap CreateUnindexedBitmap(Bitmap original)
+        public Bitmap CreateUnindexedBitmap(Bitmap original)
         {
             var unindexedbmp = new Bitmap(original.Width, original.Height);
 

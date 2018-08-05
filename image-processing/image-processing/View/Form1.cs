@@ -22,7 +22,18 @@ namespace image_processing
             _processor = imageProcessor;
             _image = new Utilities.Image();
             _image.OnViewImageChange += _image_OnViewImageChange;
+            pictureBox1.MouseClick += PictureBox1_MouseClick;
 
+        }
+
+        private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            var blob = _processor.getBlobAtPixel(e.X, e.Y);
+            if (blob != null)
+            {
+                BlobView form = new BlobView(blob);
+                form.Show();
+            }
         }
 
         private void _image_OnViewImageChange(object sender, EventArgs e)
@@ -34,14 +45,9 @@ namespace image_processing
         {
             if(ImageFileDialog.ShowDialog() == DialogResult.OK)
             {
-
-
                 _image.OriginalImage = new Bitmap(ImageFileDialog.FileName);
                 _image.ProcessingImage = new Bitmap(ImageFileDialog.FileName);
-                _image.ViewImage = new Bitmap(ImageFileDialog.FileName);
-                    
-                
-
+                _image.ViewImage = new Bitmap(ImageFileDialog.FileName);                                  
             }
         }
 
