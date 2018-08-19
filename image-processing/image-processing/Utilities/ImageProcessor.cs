@@ -43,12 +43,13 @@ namespace image_processing.Utilities
             return filter.Apply(bitmap);
         }
       
-        public Bitmap getBlobAtPixel(int x,int y)
+        public Bitmap GetBlobAtPixel(int x,int y)
         {
             var bmp = _blobs?.FirstOrDefault((blob) => blob.Rectangle.Contains(x, y))?.Image.ToManagedImage();
 
             return bmp != null ? ReverseBitmapColors(bmp) : null;
         }
+
         public Bitmap FindShapes(Bitmap bitmap)
         {
             var reversedbmp = ReverseBitmapColors(bitmap);
@@ -72,6 +73,7 @@ namespace image_processing.Utilities
                 
                 var edgePoints = blobCounter.GetBlobsEdgePoints(blob);
                 var points = edgePoints.Select(p => new Point(p.X, p.Y)).ToArray();
+                if(edgePoints.Count !=1 )
                 switch(shapeChecker.CheckShapeType(edgePoints))
                 {
                     case ShapeType.Circle:
@@ -170,6 +172,54 @@ namespace image_processing.Utilities
             SimpleSkeletonization filter = new SimpleSkeletonization(255, 0);
 
             return filter.Apply(bitmap);
+        }
+
+        public double GetPoresVolume(Bitmap bitmap)
+        {
+            var binaryBmp = Binarization(bitmap, 60);
+
+            var bitmapdata = binaryBmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+
+            var ptr = bitmapdata.Scan0;
+
+            int bytes = Math.Abs(bitmapdata.Stride) * bitmap.Height;
+            byte[] rgbValues = new byte[bytes];
+            Marshal.Copy(ptr, rgbValues, 0, bytes);
+            binaryBmp.UnlockBits(bitmapdata);
+
+            int total = 0;
+            Parallel.For(0, rgbValues.Length, () => 0, (i, state, partial) =>
+                {
+                    if (rgbValues[i] == 0)
+                    {
+                        partial++;
+                    }
+                    return partial;
+                }, (partial) => total += partial);
+
+            return Math.Round((total/(double)rgbValues.Length)*100,2);
+        }
+
+        public List<int> BlolbsArea(Bitmap bitmap)
+        {
+            Bitmap reversedBmp = ReverseBitmapColors(bitmap);
+
+            BlobCounter blobCounter = new BlobCounter(reversedBmp);
+
+            var blobs = blobCounter.GetObjects(reversedBmp, false);
+
+            int[] blobsvec = new int[blobs.Length];
+
+            Parallel.For(0, blobs.Length, (index) =>
+              {
+                  blobsvec[index] = blobs[index].Area;
+              });
+
+            List<int> BlobsArea = blobsvec.ToList();
+
+            BlobsArea.Sort();
+
+            return BlobsArea;
         }
     }
 }

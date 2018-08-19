@@ -28,7 +28,7 @@ namespace image_processing
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            var blob = _processor.getBlobAtPixel(e.X, e.Y);
+            var blob = _processor.GetBlobAtPixel(e.X, e.Y);
             if (blob != null)
             {
                 BlobView form = new BlobView(blob);
@@ -152,6 +152,20 @@ namespace image_processing
             {
                 _image.ViewImage.Save(saveFileDialog.FileName);
             }
+        }
+
+        private void volumeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show($"Before {_processor.GetPoresVolume(_image.OriginalImage)} \n After {_processor.GetPoresVolume(_image.ViewImage)}");
+        }
+
+        private void sizeDistributionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<int> sizes = _processor.BlolbsArea(_image.ProcessingImage);
+            
+            SizeDistributionView distributionView = new SizeDistributionView(sizes);
+
+            distributionView.Show();
         }
     }
 }

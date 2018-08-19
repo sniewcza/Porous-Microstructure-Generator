@@ -40,10 +40,13 @@
             this.openingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skeletonizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.blobDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ImageFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.blobDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statisticToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.volumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sizeDistributionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -54,7 +57,8 @@
             this.menuStrip1.BackColor = System.Drawing.SystemColors.MenuBar;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
-            this.filtersToolStripMenuItem});
+            this.filtersToolStripMenuItem,
+            this.statisticToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -89,7 +93,7 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -149,6 +153,13 @@
             this.skeletonizationToolStripMenuItem.Text = "Skeletonization";
             this.skeletonizationToolStripMenuItem.Click += new System.EventHandler(this.skeletonizationToolStripMenuItem_Click);
             // 
+            // blobDetectionToolStripMenuItem
+            // 
+            this.blobDetectionToolStripMenuItem.Name = "blobDetectionToolStripMenuItem";
+            this.blobDetectionToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.blobDetectionToolStripMenuItem.Text = "Blob Detection";
+            this.blobDetectionToolStripMenuItem.Click += new System.EventHandler(this.blobDetectionToolStripMenuItem_Click);
+            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -175,12 +186,28 @@
             // 
             this.ImageFileDialog.FileName = "openFileDialog1";
             // 
-            // blobDetectionToolStripMenuItem
+            // statisticToolStripMenuItem
             // 
-            this.blobDetectionToolStripMenuItem.Name = "blobDetectionToolStripMenuItem";
-            this.blobDetectionToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.blobDetectionToolStripMenuItem.Text = "Blob Detection";
-            this.blobDetectionToolStripMenuItem.Click += new System.EventHandler(this.blobDetectionToolStripMenuItem_Click);
+            this.statisticToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.volumeToolStripMenuItem,
+            this.sizeDistributionToolStripMenuItem});
+            this.statisticToolStripMenuItem.Name = "statisticToolStripMenuItem";
+            this.statisticToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.statisticToolStripMenuItem.Text = "Statistic";
+            // 
+            // volumeToolStripMenuItem
+            // 
+            this.volumeToolStripMenuItem.Name = "volumeToolStripMenuItem";
+            this.volumeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.volumeToolStripMenuItem.Text = "Volume";
+            this.volumeToolStripMenuItem.Click += new System.EventHandler(this.volumeToolStripMenuItem_Click);
+            // 
+            // sizeDistributionToolStripMenuItem
+            // 
+            this.sizeDistributionToolStripMenuItem.Name = "sizeDistributionToolStripMenuItem";
+            this.sizeDistributionToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.sizeDistributionToolStripMenuItem.Text = "Size Distribution";
+            this.sizeDistributionToolStripMenuItem.Click += new System.EventHandler(this.sizeDistributionToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -220,6 +247,9 @@
         private System.Windows.Forms.ToolStripMenuItem closingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem skeletonizationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem blobDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem statisticToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem volumeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sizeDistributionToolStripMenuItem;
     }
 }
 

@@ -17,6 +17,8 @@ namespace image_processing.Utilities
         Bitmap Skeletonization(Bitmap bitmap);
         Bitmap ReverseBitmapColors(Bitmap bitmap);
         Bitmap FindShapes(Bitmap bitmap);
-        Bitmap getBlobAtPixel(int x, int y);
+        Bitmap GetBlobAtPixel(int x, int y);
+        double GetPoresVolume(Bitmap bitmap);
+        List<int> BlolbsArea(Bitmap bitmap);
     }
 }
