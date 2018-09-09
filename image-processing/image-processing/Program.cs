@@ -1,8 +1,5 @@
 ﻿using image_processing.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace image_processing

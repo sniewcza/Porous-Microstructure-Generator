@@ -1,13 +1,10 @@
-﻿using System;
+﻿using AForge.Imaging;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace image_processing.Utilities
 {
-  public  interface IImageProcessor
+    public  interface IImageProcessor
     {
         Bitmap Binarization(Bitmap bitmap, int threshold);
         Bitmap Erosion(Bitmap bitmap);
@@ -17,7 +14,7 @@ namespace image_processing.Utilities
         Bitmap Skeletonization(Bitmap bitmap);
         Bitmap ReverseBitmapColors(Bitmap bitmap);
         Bitmap FindShapes(Bitmap bitmap);
-        Bitmap GetBlobAtPixel(int x, int y);
+        Blob GetBlobAtPixel(int x, int y);
         double GetPoresVolume(Bitmap bitmap);
         List<int> BlolbsArea(Bitmap bitmap);
     }

@@ -13,7 +13,7 @@ namespace image_processing.Utilities
     class ImageProcessor : IImageProcessor
     {
         private Blob[] _blobs;
-
+        private BlobCounter _blobCounter;
         public Bitmap Binarization(Bitmap bitmap, int threshold)
         {
             Threshold filter = new Threshold(threshold);
@@ -43,22 +43,22 @@ namespace image_processing.Utilities
             return filter.Apply(bitmap);
         }
       
-        public Bitmap GetBlobAtPixel(int x,int y)
+        public Blob GetBlobAtPixel(int x,int y)
         {
-            var bmp = _blobs?.FirstOrDefault((blob) => blob.Rectangle.Contains(x, y))?.Image.ToManagedImage();
+            var blob = _blobs?.FirstOrDefault((b) => b.Rectangle.Contains(x, y));
 
-            return bmp != null ? ReverseBitmapColors(bmp) : null;
+            return blob ?? null;
         }
 
         public Bitmap FindShapes(Bitmap bitmap)
         {
             var reversedbmp = ReverseBitmapColors(bitmap);
-            BlobCounter blobCounter = new BlobCounter(reversedbmp);
+             _blobCounter = new BlobCounter(reversedbmp);
 
             var bmp = CreateUnindexedBitmap(bitmap);
 
             
-            _blobs = blobCounter.GetObjects(reversedbmp, false);
+            _blobs = _blobCounter.GetObjects(reversedbmp, false);
             
             
             // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
@@ -71,7 +71,7 @@ namespace image_processing.Utilities
             foreach (var blob in _blobs)
             {
                 
-                var edgePoints = blobCounter.GetBlobsEdgePoints(blob);
+                var edgePoints = _blobCounter.GetBlobsEdgePoints(blob);
                 var points = edgePoints.Select(p => new Point(p.X, p.Y)).ToArray();
                 if(edgePoints.Count !=1 )
                 switch(shapeChecker.CheckShapeType(edgePoints))
