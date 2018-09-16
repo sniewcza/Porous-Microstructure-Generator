@@ -1,10 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using AForge.Math.Metrics;
 namespace image_processing.Utilities
 {
-    
-    class ShapeAnalyzer
+    class CustomComparer : IEqualityComparer<double[]>
+    {
+        public bool Equals(double[] x, double[] y)
+        {
+            return x.SequenceEqual(y);
+        }
+
+        public int GetHashCode(double[] obj)
+        {
+            int hash = 0;
+            foreach(double val in obj)
+            {
+                hash += val.GetHashCode();
+            }
+            return hash;
+        }
+    }
+    public class ShapeAnalyzer
     {
         private EuclideanDistance EuclideanDistance;
         private Dictionary<double[], string> trainingData;
@@ -20,7 +37,7 @@ namespace image_processing.Utilities
         public ShapeAnalyzer()
         {
             EuclideanDistance = new EuclideanDistance();
-            trainingData = new Dictionary<double[], string>
+            trainingData = new Dictionary<double[], string>(new CustomComparer())
             {
                 { circle, "circle" },
                 { circle2, "circle" },
@@ -29,24 +46,35 @@ namespace image_processing.Utilities
                 { triangle, "triangle" },
                 { triangle2, "triangle" },
                 { diamond, "diamond" },
-                { diamond2, "diamond" }
+                { diamond2, "diamond" },
+               
             };
         }
 
+        public void AddTrainingData(double[] shapeDescriptor, string description)
+        {
+            trainingData.Add(shapeDescriptor, description);
+        }
         public string Analyze(double[] shapeDescriptor)
         {
             if(shapeDescriptor.Length != 6)
             {
-                throw new System.Exception("Shepe Descriptor must be length of 7");
+                throw new System.Exception("Shepe Descriptor must be length of 6");
+            }          
+            if (trainingData.ContainsKey(shapeDescriptor))
+            {
+                return trainingData[shapeDescriptor];
             }
+            else
+            {
+                var distances = CalculateDistances(shapeDescriptor, 3);
 
-            var distances = CalculateDistances(shapeDescriptor,3);
+                var NN = distances.OrderBy(pair => pair.Value).Select(pair => pair.Key).Take(3).ToList();
 
-           var NN = distances.OrderBy(pair=> pair.Value).Select(pair=>pair.Key).Take(3).ToList() ;
-
-          var v =  trainingData.Join(NN, pair => pair.Key, pair2 => pair2, (pair, pair2) => pair.Value );
-            var x = v.GroupBy(ShapeClass => ShapeClass);
-            return x.First(g => g.Count() == x.Max(gr => gr.Count())).Key;
+                var v = NN.Join(trainingData, pair => pair, pair2 => pair2.Key, (pair, pair2) => pair2.Value);
+                var x = v.GroupBy(ShapeClass => ShapeClass);
+                return x.First(g => g.Count() == x.Max(gr => gr.Count())).Key;
+            }
         }
 
         private Dictionary<double[],double> CalculateDistances(double[] shapeDescriptor,int numberOfNeigbhours)

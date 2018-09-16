@@ -1,10 +1,12 @@
 ﻿using AForge.Imaging;
+using AForge.Math;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-
+using System.Linq;
+using AForge.Math;
 namespace image_processing.Utilities
 {
     public class BlobMomentum
@@ -29,7 +31,8 @@ namespace image_processing.Utilities
         public int[,] Array2D { get => _array2D; set => _array2D = value; }
         private int area;
         public double M { get; set; }
-
+        public Complex[] FD { get; set; }
+        
         public BlobMomentum(Bitmap bitmap, List<AForge.IntPoint> edgePoints,int area)
         {
             this.area = area;
@@ -61,8 +64,15 @@ namespace image_processing.Utilities
 
             ComputeLp1();
             ComputeM();
+          //  ComputeFD();
         }
 
+        private void ComputeFD()
+        {
+           var complex= _edgePoints.Select(point => new Complex(point.X, point.Y)).ToArray();
+            FourierTransform.DFT(complex, FourierTransform.Direction.Forward);
+            FD = complex;
+        }
         private double getMomentum(int Ptier, int Qtier)
         {
 

@@ -74,6 +74,12 @@
     <Compile Include="Utilities\IImageProcessor.cs" />
     <Compile Include="Utilities\Image.cs" />
     <Compile Include="Utilities\ImageProcessor.cs" />
+    <Compile Include="View\ShapeTagInputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ShapeTagInputBox.Designer.cs">
+      <DependentUpon>ShapeTagInputBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\SizeDistributionView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,6 +107,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\ShapeTagInputBox.resx">
+      <DependentUpon>ShapeTagInputBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\SizeDistributionView.resx">
       <DependentUpon>SizeDistributionView.cs</DependentUpon>
     </EmbeddedResource>

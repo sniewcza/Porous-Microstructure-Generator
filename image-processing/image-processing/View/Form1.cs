@@ -11,6 +11,7 @@ namespace image_processing
     {
         Utilities.Image _image;
         IImageProcessor _processor;
+        ShapeAnalyzer shapeAnalyzer = new ShapeAnalyzer();
         public Form1(IImageProcessor imageProcessor)
         {
             InitializeComponent();         
@@ -26,7 +27,7 @@ namespace image_processing
             var blob = _processor.GetBlobAtPixel(e.X, e.Y);
             if (blob != null)
             {
-                BlobView form = new BlobView(blob);
+                BlobView form = new BlobView(blob,shapeAnalyzer);
                 form.Show();
             }
         }
