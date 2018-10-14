@@ -40,13 +40,14 @@
             this.openingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skeletonizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.blobDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.ImageFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.statisticToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.volumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sizeDistributionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shapeAnalyzerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importShapeAnalyzerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.ImageFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -58,7 +59,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.filtersToolStripMenuItem,
-            this.statisticToolStripMenuItem});
+            this.statisticToolStripMenuItem,
+            this.shapeAnalyzerToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -105,8 +107,7 @@
             this.dilatationToolStripMenuItem,
             this.openingToolStripMenuItem,
             this.closingToolStripMenuItem,
-            this.skeletonizationToolStripMenuItem,
-            this.blobDetectionToolStripMenuItem});
+            this.skeletonizationToolStripMenuItem});
             this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
             this.filtersToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.filtersToolStripMenuItem.Text = "Filters";
@@ -153,12 +154,43 @@
             this.skeletonizationToolStripMenuItem.Text = "Skeletonization";
             this.skeletonizationToolStripMenuItem.Click += new System.EventHandler(this.skeletonizationToolStripMenuItem_Click);
             // 
-            // blobDetectionToolStripMenuItem
+            // statisticToolStripMenuItem
             // 
-            this.blobDetectionToolStripMenuItem.Name = "blobDetectionToolStripMenuItem";
-            this.blobDetectionToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.blobDetectionToolStripMenuItem.Text = "Blob Detection";
-            this.blobDetectionToolStripMenuItem.Click += new System.EventHandler(this.blobDetectionToolStripMenuItem_Click);
+            this.statisticToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.volumeToolStripMenuItem,
+            this.sizeDistributionToolStripMenuItem});
+            this.statisticToolStripMenuItem.Name = "statisticToolStripMenuItem";
+            this.statisticToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.statisticToolStripMenuItem.Text = "Statistic";
+            // 
+            // volumeToolStripMenuItem
+            // 
+            this.volumeToolStripMenuItem.Name = "volumeToolStripMenuItem";
+            this.volumeToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.volumeToolStripMenuItem.Text = "Volume";
+            this.volumeToolStripMenuItem.Click += new System.EventHandler(this.volumeToolStripMenuItem_Click);
+            // 
+            // sizeDistributionToolStripMenuItem
+            // 
+            this.sizeDistributionToolStripMenuItem.Name = "sizeDistributionToolStripMenuItem";
+            this.sizeDistributionToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.sizeDistributionToolStripMenuItem.Text = "Size Distribution";
+            this.sizeDistributionToolStripMenuItem.Click += new System.EventHandler(this.sizeDistributionToolStripMenuItem_Click);
+            // 
+            // shapeAnalyzerToolStripMenuItem
+            // 
+            this.shapeAnalyzerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importShapeAnalyzerToolStripMenuItem});
+            this.shapeAnalyzerToolStripMenuItem.Name = "shapeAnalyzerToolStripMenuItem";
+            this.shapeAnalyzerToolStripMenuItem.Size = new System.Drawing.Size(71, 20);
+            this.shapeAnalyzerToolStripMenuItem.Text = "Generator";
+            // 
+            // importShapeAnalyzerToolStripMenuItem
+            // 
+            this.importShapeAnalyzerToolStripMenuItem.Name = "importShapeAnalyzerToolStripMenuItem";
+            this.importShapeAnalyzerToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.importShapeAnalyzerToolStripMenuItem.Text = "Generate Microstructure";
+            this.importShapeAnalyzerToolStripMenuItem.Click += new System.EventHandler(this.generateMicrostructureToolStripMenuItem_Click);
             // 
             // panel1
             // 
@@ -185,29 +217,6 @@
             // ImageFileDialog
             // 
             this.ImageFileDialog.FileName = "openFileDialog1";
-            // 
-            // statisticToolStripMenuItem
-            // 
-            this.statisticToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.volumeToolStripMenuItem,
-            this.sizeDistributionToolStripMenuItem});
-            this.statisticToolStripMenuItem.Name = "statisticToolStripMenuItem";
-            this.statisticToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
-            this.statisticToolStripMenuItem.Text = "Statistic";
-            // 
-            // volumeToolStripMenuItem
-            // 
-            this.volumeToolStripMenuItem.Name = "volumeToolStripMenuItem";
-            this.volumeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.volumeToolStripMenuItem.Text = "Volume";
-            this.volumeToolStripMenuItem.Click += new System.EventHandler(this.volumeToolStripMenuItem_Click);
-            // 
-            // sizeDistributionToolStripMenuItem
-            // 
-            this.sizeDistributionToolStripMenuItem.Name = "sizeDistributionToolStripMenuItem";
-            this.sizeDistributionToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
-            this.sizeDistributionToolStripMenuItem.Text = "Size Distribution";
-            this.sizeDistributionToolStripMenuItem.Click += new System.EventHandler(this.sizeDistributionToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -246,10 +255,11 @@
         private System.Windows.Forms.ToolStripMenuItem openingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem skeletonizationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem blobDetectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem statisticToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem volumeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sizeDistributionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem shapeAnalyzerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importShapeAnalyzerToolStripMenuItem;
     }
 }
 

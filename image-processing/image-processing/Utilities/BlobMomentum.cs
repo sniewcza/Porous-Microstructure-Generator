@@ -11,6 +11,9 @@ namespace image_processing.Utilities
 {
     public class BlobMomentum
     {
+        private AForge.IntPoint _centerOfgravity;
+        private Guid Guid;
+        private int _Id;
         private Blob _blob;
         private Bitmap _bmp;
         private List<AForge.IntPoint> _edgePoints;
@@ -32,15 +35,22 @@ namespace image_processing.Utilities
         private int area;
         public double M { get; set; }
         public Complex[] FD { get; set; }
-        
-        public BlobMomentum(Bitmap bitmap, List<AForge.IntPoint> edgePoints,int area)
+        public int Id { get => _Id; set => _Id = value; }
+        public int Area { get => area; set => area = value; }
+        public Guid Guid1 { get => Guid; set => Guid = value; }
+        public Blob Blob { get => _blob; set => _blob = value; }
+
+        public BlobMomentum(Blob blob,Bitmap bitmap, List<AForge.IntPoint> edgePoints)
         {
-            this.area = area;
+            this.Blob = blob;
+            this._centerOfgravity = blob.CenterOfGravity.Round(); ;
+            this._Id = blob.ID;
+            this.area = blob.Area;
             _bmp = bitmap;
             _edgePoints = edgePoints;
           //  Generate2DArrayFromBmp();
-            CentralX = Convert.ToInt32(getMomentum(1, 0) / getMomentum(0, 0));
-            CentralY = Convert.ToInt32(getMomentum(0, 1) / getMomentum(0, 0));
+            //CentralX = Convert.ToInt32(getMomentum(1, 0) / getMomentum(0, 0));
+           // CentralY = Convert.ToInt32(getMomentum(0, 1) / getMomentum(0, 0));
 
             double m00 = getMomentum(0, 0);
 
@@ -62,7 +72,7 @@ namespace image_processing.Utilities
 
             M7 = (getCentralMomentum(2, 0) * getCentralMomentum(0, 2) - Math.Pow(getCentralMomentum(1, 1), 2)) / Math.Pow(m00, 4);
 
-            ComputeLp1();
+           // ComputeLp1();
             ComputeM();
           //  ComputeFD();
         }
@@ -140,7 +150,7 @@ namespace image_processing.Utilities
 
         public double[] getShapeDescriptor()
         {
-            return new double[] { M1,M2,M3,M7,Lp1,M};
+            return new double[] { M1,M2,M3,M7,Area,M};
         }
 
         private void ComputeLp1()
@@ -160,9 +170,23 @@ namespace image_processing.Utilities
 
         private void ComputeM()
         {
-            double m = 0.5 * _edgePoints.Count / Math.Sqrt(3.14 * area) - 1;
+            double m = 0.5 * _edgePoints.Count / Math.Sqrt(3.14 * Area) - 1;
 
             M = m < 0 ? 0 : m;
+        }
+
+        public List<Tuple<int,int>> GetEdgepointsDistancesFromCenterOfGravity()
+        {
+            List<Tuple<int, int>> list = new List<Tuple<int, int>>();
+
+           
+            foreach(AForge.IntPoint point in this._edgePoints)
+            {
+
+                list.Add(new Tuple<int, int>(point.X - _centerOfgravity.X, point.Y - _centerOfgravity.Y));
+            }
+
+            return list;
         }
     }
 }

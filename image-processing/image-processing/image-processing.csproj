@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Utilities\BlobMomentum.cs" />
+    <Compile Include="Utilities\MicrostructureGenerator.cs" />
     <Compile Include="Utilities\ShapeAnalyzer.cs" />
     <Compile Include="View\BlobView.cs">
       <SubType>Form</SubType>
@@ -74,6 +75,12 @@
     <Compile Include="Utilities\IImageProcessor.cs" />
     <Compile Include="Utilities\Image.cs" />
     <Compile Include="Utilities\ImageProcessor.cs" />
+    <Compile Include="View\GeneratorProgressBar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\GeneratorProgressBar.Designer.cs">
+      <DependentUpon>GeneratorProgressBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\ShapeTagInputBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,6 +114,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\GeneratorProgressBar.resx">
+      <DependentUpon>GeneratorProgressBar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\ShapeTagInputBox.resx">
       <DependentUpon>ShapeTagInputBox.cs</DependentUpon>
     </EmbeddedResource>

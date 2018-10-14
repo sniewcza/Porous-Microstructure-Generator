@@ -13,7 +13,13 @@ namespace image_processing.Utilities
     class ImageProcessor : IImageProcessor
     {
         private Blob[] _blobs;
+        public List<BlobMomentum> BlobsMomemntum;
         private BlobCounter _blobCounter;
+
+        public event EventHandler OnProgress;
+        public event EventHandler<int> OnStart;
+        public event EventHandler OnEnd;
+
         public Bitmap Binarization(Bitmap bitmap, int threshold)
         {
             Threshold filter = new Threshold(threshold);
@@ -24,6 +30,7 @@ namespace image_processing.Utilities
 
         public Bitmap Closing(Bitmap bitmap)
         {
+         // var b=  AForge.Imaging.Image.Clone(bitmap, PixelFormat.Format24bppRgb);
             Closing filter = new Closing();
 
             return filter.Apply(bitmap);
@@ -50,61 +57,72 @@ namespace image_processing.Utilities
             return blob ?? null;
         }
 
-        public Bitmap FindShapes(Bitmap bitmap)
+        public void FindShapes(Bitmap bitmap)
         {
             var reversedbmp = ReverseBitmapColors(bitmap);
              _blobCounter = new BlobCounter(reversedbmp);
 
-            var bmp = CreateUnindexedBitmap(bitmap);
+           // var bmp = CreateUnindexedBitmap(bitmap);
 
             
             _blobs = _blobCounter.GetObjects(reversedbmp, false);
-            
-            
+            BlobMomentum[] blobMomentum = new BlobMomentum[_blobs.Length];
+
+            OnStart(this, _blobs.Length);
             // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
 
-            SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
-            var g = Graphics.FromImage(bmp);
+            //SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
+           // var g = Graphics.FromImage(bmp);
 
-            shapeChecker.MinAcceptableDistortion = 0.5f;
-            shapeChecker.RelativeDistortionLimit = 0.07f;
-            foreach (var blob in _blobs)
+            //shapeChecker.MinAcceptableDistortion = 0.5f;
+            //shapeChecker.RelativeDistortionLimit = 0.07f;
+
+            //foreach (var blob in _blobs)
+            //{
+                
+            //    var edgePoints = _blobCounter.GetBlobsEdgePoints(blob);
+            //    var points = edgePoints.Select(p => new Point(p.X, p.Y)).ToArray();
+            //    if(edgePoints.Count !=1 )
+            //    //switch(shapeChecker.CheckShapeType(edgePoints))
+            //    //{
+            //    //    case ShapeType.Circle:
+            //    //        foreach (Point p in points)                       
+            //    //            g.DrawEllipse(new Pen(Color.Red), p.X - 1, p.Y - 1, 0.5f, 0.5f);                       
+            //    //        break;
+            //    //    case ShapeType.Quadrilateral:
+            //    //        foreach (Point p in points)
+            //    //            g.DrawEllipse(new Pen(Color.Orange), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+            //    //        break;
+            //    //    case ShapeType.Triangle:
+            //    //        foreach (Point p in points)
+            //    //            g.DrawEllipse(new Pen(Color.Purple), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+            //    //        break;
+            //    //    case ShapeType.Unknown:
+            //    //        foreach (Point p in points)
+            //    //            g.DrawEllipse(new Pen(Color.Brown), p.X - 1, p.Y - 1, 0.5f, 0.5f);
+            //    //        break;
+            //    //}
+
+                
+            //    BlobsMomemntum.Add(new BlobMomentum(blob,ReverseBitmapColors( blob.Image.ToManagedImage()), edgePoints));
+
+                
+            //}
+
+            Parallel.For(0, _blobs.Length, index =>
             {
-                
-                var edgePoints = _blobCounter.GetBlobsEdgePoints(blob);
-                var points = edgePoints.Select(p => new Point(p.X, p.Y)).ToArray();
-                if(edgePoints.Count !=1 )
-                switch(shapeChecker.CheckShapeType(edgePoints))
-                {
-                    case ShapeType.Circle:
-                        foreach (Point p in points)                       
-                            g.DrawEllipse(new Pen(Color.Red), p.X - 1, p.Y - 1, 0.5f, 0.5f);                       
-                        break;
-                    case ShapeType.Quadrilateral:
-                        foreach (Point p in points)
-                            g.DrawEllipse(new Pen(Color.Orange), p.X - 1, p.Y - 1, 0.5f, 0.5f);
-                        break;
-                    case ShapeType.Triangle:
-                        foreach (Point p in points)
-                            g.DrawEllipse(new Pen(Color.Purple), p.X - 1, p.Y - 1, 0.5f, 0.5f);
-                        break;
-                    case ShapeType.Unknown:
-                        foreach (Point p in points)
-                            g.DrawEllipse(new Pen(Color.Brown), p.X - 1, p.Y - 1, 0.5f, 0.5f);
-                        break;
-                }
-               
-               
-                
-            }
+                var edgePoints = _blobCounter.GetBlobsEdgePoints(_blobs[index]);
+                blobMomentum[index] = new BlobMomentum(_blobs[index], ReverseBitmapColors( _blobs[index].Image.ToManagedImage()), edgePoints);
+                OnProgress(this,new EventArgs());
+            });
             //Parallel.For(0, blobs.Length;, (index) =>
             //    {                   
             //       Drawing.Rectangle(bitmapdata, blobs[index].Rectangle, Color.Orange);                   
             //    });            
 
             //bmp.UnlockBits(bitmapdata);
-
-            return bmp;
+            BlobsMomemntum = blobMomentum.ToList();
+            //return bitmap;
         }
 
         public Bitmap Opening(Bitmap bitmap)
@@ -124,9 +142,10 @@ namespace image_processing.Utilities
             byte[] rgbValues = new byte[bytes];
             Marshal.Copy(ptr, rgbValues, 0, bytes);
             bitmap.UnlockBits(bitmapdata);
+            int max = rgbValues.Max();
             Parallel.For(0, rgbValues.Length, index =>
              {
-                 rgbValues[index] = rgbValues[index] == 255 ? Byte.Parse("0") : Byte.Parse("255");
+                 rgbValues[index] = rgbValues[index] == max ? Byte.Parse("0") : Byte.Parse("255");
 
              });
             bitmapdata = newbmp.LockBits(new Rectangle(0, 0, newbmp.Width, newbmp.Height), ImageLockMode.ReadWrite, newbmp.PixelFormat);
@@ -176,26 +195,19 @@ namespace image_processing.Utilities
 
         public double GetPoresVolume(Bitmap bitmap)
         {
-            var binaryBmp = Binarization(bitmap, 60);
+          //  var binaryBmp = Binarization(bitmap, 60);
 
-            var bitmapdata = binaryBmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+            var bitmapdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
 
             var ptr = bitmapdata.Scan0;
 
             int bytes = Math.Abs(bitmapdata.Stride) * bitmap.Height;
             byte[] rgbValues = new byte[bytes];
             Marshal.Copy(ptr, rgbValues, 0, bytes);
-            binaryBmp.UnlockBits(bitmapdata);
+           bitmap.UnlockBits(bitmapdata);
 
-            int total = 0;
-            Parallel.For(0, rgbValues.Length, () => 0, (i, state, partial) =>
-                {
-                    if (rgbValues[i] == 0)
-                    {
-                        partial++;
-                    }
-                    return partial;
-                }, (partial) => total += partial);
+            
+           int total = rgbValues.Where(b => b == 0).Count();
 
             return Math.Round((total/(double)rgbValues.Length)*100,2);
         }
@@ -220,6 +232,25 @@ namespace image_processing.Utilities
             BlobsArea.Sort();
 
             return BlobsArea;
+        }
+
+        public List<BlobMomentum> BlobsMomentum()
+        {
+            return this.BlobsMomemntum;
+        }
+
+        public Bitmap ConvertTo16bpp(Bitmap original)
+        {          
+            if (original.PixelFormat != PixelFormat.Format8bppIndexed && original.PixelFormat != PixelFormat.Format16bppGrayScale)
+            {
+
+                return Grayscale.CommonAlgorithms.RMY.Apply(original);
+            }
+            else
+            {
+                return original;
+            }
+           // return newBitmap;
         }
     }
 }

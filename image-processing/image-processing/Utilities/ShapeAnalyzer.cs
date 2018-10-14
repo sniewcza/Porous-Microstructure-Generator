@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AForge.Math.Metrics;
 namespace image_processing.Utilities
 {
+    [Serializable]
     class CustomComparer : IEqualityComparer<double[]>
     {
         public bool Equals(double[] x, double[] y)
@@ -21,41 +23,34 @@ namespace image_processing.Utilities
             return hash;
         }
     }
+    [Serializable]
     public class ShapeAnalyzer
     {
         private EuclideanDistance EuclideanDistance;
-        private Dictionary<double[], string> trainingData;
-        double[] circle = { 0.16191, 0.02621, 0, 0.00632, 0.64, 0 };
-        double[] circle2 = { 0.16711, 0.02792, 0.00003, 0.00635, 0.47299, 0 };
-        double[] square = { 0.16798, 0.02821, 0.00002, 0.00705, 0.38281, 0.05812 };
-        double[] square2 = { 0.16799, 0.02822, 0.00003, 0.00695, 0.40399, 0.10290 };
-        double[] triangle = { 0.23103, 0.05337, 0.00422, 0.0087, 0.0882, 0.0842 };
-        double[] triangle2 = { 0.20758, 0.05179, 0.00196, 0.00838, 0.13442, 0.04494 };
-        double[] diamond = { 0.19637, 0.03856, 0.00012, 0.00654, 0.1849, 0 };
-        double[] diamond2 = { 0.18131, 0.03287, 0.00019, 0.00683, 0.256630, 0 };
+        private Dictionary<double[], Guid> trainingData;
+       // double[] circle = { 0.16191, 0.02621, 0, 0.00632, 0.64, 0 };
+        //double[] circle2 = { 0.16711, 0.02792, 0.00003, 0.00635, 0.47299, 0 };
+        //double[] square = { 0.16798, 0.02821, 0.00002, 0.00705, 0.38281, 0.05812 };
+        //double[] square2 = { 0.16799, 0.02822, 0.00003, 0.00695, 0.40399, 0.10290 };
+        //double[] triangle = { 0.23103, 0.05337, 0.00422, 0.0087, 0.0882, 0.0842 };
+        //double[] triangle2 = { 0.20758, 0.05179, 0.00196, 0.00838, 0.13442, 0.04494 };
+        //double[] diamond = { 0.19637, 0.03856, 0.00012, 0.00654, 0.1849, 0 };
+        //double[] diamond2 = { 0.18131, 0.03287, 0.00019, 0.00683, 0.256630, 0 };
 
         public ShapeAnalyzer()
         {
             EuclideanDistance = new EuclideanDistance();
-            trainingData = new Dictionary<double[], string>(new CustomComparer())
-            {
-                { circle, "circle" },
-                { circle2, "circle" },
-                { square, "square" },
-                { square2, "square" },
-                { triangle, "triangle" },
-                { triangle2, "triangle" },
-                { diamond, "diamond" },
-                { diamond2, "diamond" },
-               
-            };
+            trainingData = new Dictionary<double[], Guid>(new CustomComparer());
+           
         }
 
-        public void AddTrainingData(double[] shapeDescriptor, string description)
+        public Dictionary<double[],Guid> TrainingData { get => trainingData; set => trainingData = value; }
+
+        public void AddTrainingData(double[] shapeDescriptor, Guid description)
         {
             trainingData.Add(shapeDescriptor, description);
         }
-        public string Analyze(double[] shapeDescriptor)
+        public Guid Analyze(double[] shapeDescriptor)
         {
             if(shapeDescriptor.Length != 6)
             {
@@ -65,25 +60,44 @@ namespace image_processing.Utilities
             {
                 return trainingData[shapeDescriptor];
             }
+            if(trainingData.Keys.Count == 0)
+            {
+                Guid guid = Guid.NewGuid();
+                trainingData.Add(shapeDescriptor, guid);
+                return guid;
+            }
             else
             {
+                
                 var distances = CalculateDistances(shapeDescriptor, 3);
 
-                var NN = distances.OrderBy(pair => pair.Value).Select(pair => pair.Key).Take(3).ToList();
+                var similar = distances.Where(pair => pair.Value > 0.3).ToList();
+                if (similar.Count == 0)
+                {
+                    Guid guid = Guid.NewGuid();
+                    trainingData.Add(shapeDescriptor, guid);
+                    return guid;
+                }
+                else
+                {
+                    var NN = similar.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).Take(3).ToList();
 
-                var v = NN.Join(trainingData, pair => pair, pair2 => pair2.Key, (pair, pair2) => pair2.Value);
-                var x = v.GroupBy(ShapeClass => ShapeClass);
-                return x.First(g => g.Count() == x.Max(gr => gr.Count())).Key;
+
+                    var v = NN.Join(trainingData, pair => pair, pair2 => pair2.Key, (pair, pair2) => pair2.Value);
+                    var x = v.GroupBy(ShapeClass => ShapeClass);
+                    return x.FirstOrDefault(g => g.Count() == x.Max(gr => gr.Count())).Key;
+                }
             }
         }
 
         private Dictionary<double[],double> CalculateDistances(double[] shapeDescriptor,int numberOfNeigbhours)
         {
             Dictionary<double[], double> distances = new Dictionary<double[], double>();
-            
+            ISimilarity similarity = new EuclideanSimilarity();
+
             foreach(double[] val in trainingData.Keys)
             {
-                double distance = EuclideanDistance.GetDistance(shapeDescriptor, val);
+                double distance = similarity.GetSimilarityScore(shapeDescriptor, val);
                 distances.Add(val,distance);
             }
             return distances;
