@@ -28,21 +28,21 @@ namespace image_processing.Utilities
             _bmp.UnlockBits(bmpData);
             
         }
-        public  Bitmap GenerateMicrostructure(Dictionary<Guid,int> blobsQuantity, List<BlobMomentum> list)
+        public  Bitmap GenerateMicrostructure(Dictionary<Guid,int> blobsQuantity, List<PoorData> list)
         {
            
-           var ordered = list.OrderByDescending(bm => bm.Blob.Area).GroupBy(bm=>bm.Guid1);
+           var ordered = list.OrderByDescending(bm => bm.Blob.Area).GroupBy(bm=>bm.ShapeId);
 
             foreach(var bm in ordered)
             {
-                GenerateBlobs(list.First(e=>e.Guid1==bm.Key), blobsQuantity[bm.Key]);
+                GenerateBlobs(list.First(e=>e.ShapeId==bm.Key), blobsQuantity[bm.Key]);
                 OnProgress(this, new EventArgs());
             }
 
-            return _bmp; //AForge.Imaging.Image.Clone(_bmp, PixelFormat.Format24bppRgb);
+            return _bmp; 
         }
 
-        private void GenerateBlobs (BlobMomentum blobMomentum, int quantity)
+        private void GenerateBlobs (PoorData blobMomentum, int quantity)
         {
             
             Random random = new Random();

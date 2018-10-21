@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AForge.Math.Metrics;
 namespace image_processing.Utilities
 {
-    [Serializable]
+    
     class CustomComparer : IEqualityComparer<double[]>
     {
         public bool Equals(double[] x, double[] y)
@@ -23,25 +22,18 @@ namespace image_processing.Utilities
             return hash;
         }
     }
-    [Serializable]
+   
     public class ShapeAnalyzer
     {
         private EuclideanDistance EuclideanDistance;
         private Dictionary<double[], Guid> trainingData;
-       // double[] circle = { 0.16191, 0.02621, 0, 0.00632, 0.64, 0 };
-        //double[] circle2 = { 0.16711, 0.02792, 0.00003, 0.00635, 0.47299, 0 };
-        //double[] square = { 0.16798, 0.02821, 0.00002, 0.00705, 0.38281, 0.05812 };
-        //double[] square2 = { 0.16799, 0.02822, 0.00003, 0.00695, 0.40399, 0.10290 };
-        //double[] triangle = { 0.23103, 0.05337, 0.00422, 0.0087, 0.0882, 0.0842 };
-        //double[] triangle2 = { 0.20758, 0.05179, 0.00196, 0.00838, 0.13442, 0.04494 };
-        //double[] diamond = { 0.19637, 0.03856, 0.00012, 0.00654, 0.1849, 0 };
-        //double[] diamond2 = { 0.18131, 0.03287, 0.00019, 0.00683, 0.256630, 0 };
+        private double _similarityCoefficient;
 
-        public ShapeAnalyzer()
+        public ShapeAnalyzer(double similarityCoefficient)
         {
             EuclideanDistance = new EuclideanDistance();
             trainingData = new Dictionary<double[], Guid>(new CustomComparer());
-           
+            _similarityCoefficient = similarityCoefficient;
         }
 
         public Dictionary<double[],Guid> TrainingData { get => trainingData; set => trainingData = value; }
@@ -69,9 +61,9 @@ namespace image_processing.Utilities
             else
             {
                 
-                var distances = CalculateDistances(shapeDescriptor, 3);
+                var distances = CalculateDistances(shapeDescriptor);
 
-                var similar = distances.Where(pair => pair.Value > 0.3).ToList();
+                var similar = distances.Where(pair => pair.Value > _similarityCoefficient).ToList();
                 if (similar.Count == 0)
                 {
                     Guid guid = Guid.NewGuid();
@@ -90,7 +82,7 @@ namespace image_processing.Utilities
             }
         }
 
-        private Dictionary<double[],double> CalculateDistances(double[] shapeDescriptor,int numberOfNeigbhours)
+        private Dictionary<double[],double> CalculateDistances(double[] shapeDescriptor)
         {
             Dictionary<double[], double> distances = new Dictionary<double[], double>();
             ISimilarity similarity = new EuclideanSimilarity();

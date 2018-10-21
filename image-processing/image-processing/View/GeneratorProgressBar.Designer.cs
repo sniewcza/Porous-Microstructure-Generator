@@ -44,7 +44,7 @@ namespace image_processing.View
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(111, 61);
+            this.label1.Location = new System.Drawing.Point(92, 61);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(0, 13);
             this.label1.TabIndex = 1;
@@ -56,9 +56,10 @@ namespace image_processing.View
             this.ClientSize = new System.Drawing.Size(284, 101);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.progressBar1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "GeneratorProgressBar";
-            this.Text = "GeneratorProgressBar";
             this.ResumeLayout(false);
             this.PerformLayout();
 

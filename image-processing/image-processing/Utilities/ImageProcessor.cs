@@ -7,13 +7,14 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AForge.Imaging;
 using AForge.Imaging.Filters;
-using AForge.Math.Geometry;
+
+
 namespace image_processing.Utilities
 {
     class ImageProcessor : IImageProcessor
     {
         private Blob[] _blobs;
-        public List<BlobMomentum> BlobsMomemntum;
+        public List<PoorData> BlobsMomemntum;
         private BlobCounter _blobCounter;
 
         public event EventHandler OnProgress;
@@ -30,7 +31,7 @@ namespace image_processing.Utilities
 
         public Bitmap Closing(Bitmap bitmap)
         {
-         // var b=  AForge.Imaging.Image.Clone(bitmap, PixelFormat.Format24bppRgb);
+        
             Closing filter = new Closing();
 
             return filter.Apply(bitmap);
@@ -54,7 +55,7 @@ namespace image_processing.Utilities
         {
             var blob = _blobs?.FirstOrDefault((b) => b.Rectangle.Contains(x, y));
 
-            return blob ?? null;
+            return blob ;
         }
 
         public void FindShapes(Bitmap bitmap)
@@ -62,11 +63,11 @@ namespace image_processing.Utilities
             var reversedbmp = ReverseBitmapColors(bitmap);
              _blobCounter = new BlobCounter(reversedbmp);
 
-           // var bmp = CreateUnindexedBitmap(bitmap);
+          
 
             
             _blobs = _blobCounter.GetObjects(reversedbmp, false);
-            BlobMomentum[] blobMomentum = new BlobMomentum[_blobs.Length];
+            PoorData[] blobMomentum = new PoorData[_blobs.Length];
 
             OnStart(this, _blobs.Length);
             // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
@@ -112,17 +113,14 @@ namespace image_processing.Utilities
             Parallel.For(0, _blobs.Length, index =>
             {
                 var edgePoints = _blobCounter.GetBlobsEdgePoints(_blobs[index]);
-                blobMomentum[index] = new BlobMomentum(_blobs[index], ReverseBitmapColors( _blobs[index].Image.ToManagedImage()), edgePoints);
+                blobMomentum[index] = new PoorData(_blobs[index], ReverseBitmapColors( _blobs[index].Image.ToManagedImage()), edgePoints);
                 OnProgress(this,new EventArgs());
             });
-            //Parallel.For(0, blobs.Length;, (index) =>
-            //    {                   
-            //       Drawing.Rectangle(bitmapdata, blobs[index].Rectangle, Color.Orange);                   
-            //    });            
-
-            //bmp.UnlockBits(bitmapdata);
+          
             BlobsMomemntum = blobMomentum.ToList();
-            //return bitmap;
+
+           
+          
         }
 
         public Bitmap Opening(Bitmap bitmap)
@@ -234,7 +232,7 @@ namespace image_processing.Utilities
             return BlobsArea;
         }
 
-        public List<BlobMomentum> BlobsMomentum()
+        public List<PoorData> BlobsMomentum()
         {
             return this.BlobsMomemntum;
         }
@@ -251,6 +249,13 @@ namespace image_processing.Utilities
                 return original;
             }
            // return newBitmap;
+        }
+
+        public Bitmap FilterBloobs(Bitmap bitmap, int minWidth, int minHeight)
+        {
+            BlobsFiltering filter = new BlobsFiltering(minWidth, minHeight, int.MaxValue, int.MaxValue);
+
+            return ReverseBitmapColors( filter.Apply(ReverseBitmapColors(bitmap)));
         }
     }
 }

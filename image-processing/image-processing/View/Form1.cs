@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using image_processing.Utilities;
 using image_processing.View;
@@ -17,14 +14,30 @@ namespace image_processing
         Utilities.Image _image;
         IImageProcessor _processor;
         ShapeAnalyzer shapeAnalyzer;
+        GlobalSettings globalSettings;
+        GeneratorProgressBar progressBar;
         public Form1(IImageProcessor imageProcessor)
         {
             InitializeComponent();         
             _processor = imageProcessor;
             _image = new Utilities.Image();
-            _image.OnViewImageChange += _image_OnViewImageChange;
-            pictureBox1.MouseClick += PictureBox1_MouseClick;
+            _image.OnViewImageChange += _image_OnViewImageChange;    
+            globalSettings = new GlobalSettings()
+            {
+                SimilarityCoefficient = 0.2
+            };
 
+            _processor.OnStart += (s, blobsNumber) =>
+            {
+                progressBar.setMaxValue(blobsNumber * 2);
+            };
+
+            _processor.OnProgress += (s, ea) =>
+            {
+                progressBar.Increment();
+            };
+
+            
         }
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -48,10 +61,10 @@ namespace image_processing
             if(ImageFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var bmp = _processor.ConvertTo16bpp(new Bitmap(ImageFileDialog.FileName));
-               // bmp = _processor.ReverseBitmapColors(bmp);
-                _image.OriginalImage = bmp; //new Bitmap(ImageFileDialog.FileName);
-                _image.ProcessingImage = bmp;//new Bitmap(ImageFileDialog.FileName);
-                _image.ViewImage = bmp;//new Bitmap(ImageFileDialog.FileName);                                  
+               
+                _image.OriginalImage = bmp; 
+                _image.ProcessingImage = bmp;
+                _image.ViewImage = bmp;                            
             }
         }
 
@@ -169,36 +182,37 @@ namespace image_processing
             if (_image.OriginalImage != null)
             {
 
-                GeneratorProgressBar progressBar = new GeneratorProgressBar();
-
-                _processor.OnStart += (s, blobsNumber) =>
-                 {
-                     progressBar.setMaxValue( blobsNumber*2);
-                 };
-
-                _processor.OnProgress += (s, ea) =>
-                  {
-                      progressBar.Increment();
-                  };
-
-                progressBar.Info = "Finding shapes";
+                progressBar = new GeneratorProgressBar
+                {
+                    Info = "Finding shapes"
+                };
                 progressBar.Show();
                 
                 await Task.Run( ()=>_processor.FindShapes(_image.ProcessingImage));
 
                 progressBar.Info = "Analyzing shapes";
 
-                shapeAnalyzer = new ShapeAnalyzer();
+                shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
                 Dictionary<Guid, int> dictionary = new Dictionary<Guid, int>();
-                List<BlobMomentum> list = _processor.BlobsMomentum();
+                List<PoorData> list = _processor.BlobsMomentum();
 
                 await Task.Run(() =>
                 {
+
+                    if (globalSettings.NormalizeBlobArea)
+                    {
+                        var areas = list.Select(item => item.Area);
+                        double max = areas.Max();
+                        double min = areas.Min();
+                        double range = max - min;
+                        list.ForEach(data => data.Area = (data.Area - min) / range);
+                    }
+
                     for (int i = 0; i < list.Count; i++)
                     {
                         var bm = list[i];
                         var shapeId = shapeAnalyzer.Analyze(bm.getShapeDescriptor());
-                        bm.Guid1 = shapeId;
+                        bm.ShapeId = shapeId;
                         if (dictionary.ContainsKey(shapeId))
                         {
                             dictionary[shapeId]++;
@@ -212,9 +226,9 @@ namespace image_processing
                     }
                 });
 
-               // progressBar.ProgressBar1.Maximum += dictionary.Values.Sum();
+              
                 progressBar.Info = "Generating microstructure";
-                // _image.ViewImage = bmp;
+                
                 MicrostructureGenerator generator = new MicrostructureGenerator(_image.OriginalImage.Width, _image.OriginalImage.Height);
                 
                 
@@ -228,22 +242,84 @@ namespace image_processing
                 progressBar.Dispose();
                 bmp = _processor.ConvertTo16bpp(bmp);
                 _image.ViewImage = bmp;
-                //   _processor.Closing(bmp);
-                //  _image.ProcessingImage = bmp;
+              
             }
         }
 
-        private void exportShapeAnalyzerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                Stream stream = new FileStream(fileDialog.FileName, FileMode.Create, FileAccess.Write);
-                IFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, shapeAnalyzer.TrainingData);
-                stream.Close();
+       
 
+        private void filterBlobsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(_image.ViewImage != null)
+            {
+                FilterBlobsInputBox form = new FilterBlobsInputBox();
+                if(DialogResult.OK == form.ShowDialog())
+                {
+                    var bmp = _processor.FilterBloobs(_image.ProcessingImage, form.minWidth, form.minHeight);
+
+                    _image.ViewImage = bmp;
+
+                    form.Dispose();
+                }
+
+                
             }
+        }
+
+        private void aToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShapeAnalyzerSettingsView form = new ShapeAnalyzerSettingsView(globalSettings);
+            
+            if(form.ShowDialog() == DialogResult.OK)
+            {
+                globalSettings.SimilarityCoefficient = form.SimilarityCoefficient;
+                globalSettings.NormalizeBlobArea = form.NormalizePoreArea;
+            }
+        }
+
+        private async void analyzeShapesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            progressBar = new GeneratorProgressBar
+            {
+                Info = "Finding shapes"
+            };
+            progressBar.Show();
+            await Task.Run(() => _processor.FindShapes(_image.ViewImage));
+            shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
+            Dictionary<Guid, int> dictionary = new Dictionary<Guid, int>();
+            List<PoorData> list = _processor.BlobsMomentum();
+
+            await Task.Run(() =>
+            {
+                if (globalSettings.NormalizeBlobArea)
+                {
+                    var areas = list.Select(item => item.Area);
+                    double max = areas.Max();
+                    double min = areas.Min();
+                    double range = max - min;
+                    list.ForEach(data => data.Area = (data.Area - min) / range);
+                }
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var bm = list[i];
+                    var shapeId = shapeAnalyzer.Analyze(bm.getShapeDescriptor());
+                    bm.ShapeId = shapeId;
+                    if (dictionary.ContainsKey(shapeId))
+                    {
+                        dictionary[shapeId]++;
+                    }
+                    else
+                    {
+                        dictionary.Add(shapeId, 1);
+                    }
+
+                    progressBar.Increment();
+                }
+            });
+
+            pictureBox1.MouseClick += PictureBox1_MouseClick;
+            progressBar.Close();
         }
     }
 }

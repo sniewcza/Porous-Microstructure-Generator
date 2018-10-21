@@ -10,22 +10,25 @@ using System.Windows.Forms;
 
 namespace image_processing.View
 {
-    public partial class ShapeTagInputBox : Form
+    public partial class FilterBlobsInputBox : Form
     {
-        public string ShapeTag { get; set; }
-        public ShapeTagInputBox()
+        public FilterBlobsInputBox()
         {
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ShapeTag = textBox1.Text.Trim();
-            if (ShapeTag != String.Empty) 
+            if(maskedTextBox1.Text != string.Empty && maskedTextBox2.Text != string.Empty )
             {
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
