@@ -14,7 +14,7 @@ namespace image_processing.Utilities
     class ImageProcessor : IImageProcessor
     {
         private Blob[] _blobs;
-        public List<PoorData> BlobsMomemntum;
+        public List<PoreData> BlobsMomemntum;
         private BlobCounter _blobCounter;
 
         public event EventHandler OnProgress;
@@ -67,7 +67,7 @@ namespace image_processing.Utilities
 
             
             _blobs = _blobCounter.GetObjects(reversedbmp, false);
-            PoorData[] blobMomentum = new PoorData[_blobs.Length];
+            PoreData[] blobMomentum = new PoreData[_blobs.Length];
 
             OnStart(this, _blobs.Length);
             // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
@@ -113,7 +113,7 @@ namespace image_processing.Utilities
             Parallel.For(0, _blobs.Length, index =>
             {
                 var edgePoints = _blobCounter.GetBlobsEdgePoints(_blobs[index]);
-                blobMomentum[index] = new PoorData(_blobs[index], ReverseBitmapColors( _blobs[index].Image.ToManagedImage()), edgePoints);
+                blobMomentum[index] = new PoreData(_blobs[index], ReverseBitmapColors( _blobs[index].Image.ToManagedImage()), edgePoints);
                 OnProgress(this,new EventArgs());
             });
           
@@ -232,12 +232,12 @@ namespace image_processing.Utilities
             return BlobsArea;
         }
 
-        public List<PoorData> BlobsMomentum()
+        public List<PoreData> BlobsMomentum()
         {
             return this.BlobsMomemntum;
         }
 
-        public Bitmap ConvertTo16bpp(Bitmap original)
+        public Bitmap ConvertToGrayscale(Bitmap original)
         {          
             if (original.PixelFormat != PixelFormat.Format8bppIndexed && original.PixelFormat != PixelFormat.Format16bppGrayScale)
             {

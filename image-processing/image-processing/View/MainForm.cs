@@ -16,12 +16,14 @@ namespace image_processing
         ShapeAnalyzer shapeAnalyzer;
         GlobalSettings globalSettings;
         GeneratorProgressBar progressBar;
+
         public Form1(IImageProcessor imageProcessor)
         {
             InitializeComponent();         
             _processor = imageProcessor;
             _image = new Utilities.Image();
-            _image.OnViewImageChange += _image_OnViewImageChange;    
+            _image.OnViewImageChange += _image_OnViewImageChange;
+            pictureBox1.MouseClick += PictureBox1_MouseClick;
             globalSettings = new GlobalSettings()
             {
                 SimilarityCoefficient = 0.2
@@ -37,7 +39,15 @@ namespace image_processing
                 progressBar.Increment();
             };
 
-            
+            this.SizeChanged += Form1_ResizeEnd;
+        }
+
+        private void Form1_ResizeEnd(object sender, EventArgs e)
+        {
+            if(_image.ViewImage != null)
+            {
+               RescalePictureBox();
+            }
         }
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -60,14 +70,47 @@ namespace image_processing
         {
             if(ImageFileDialog.ShowDialog() == DialogResult.OK)
             {
-                var bmp = _processor.ConvertTo16bpp(new Bitmap(ImageFileDialog.FileName));
+                var bmp = _processor.ConvertToGrayscale(new Bitmap(ImageFileDialog.FileName));
                
                 _image.OriginalImage = bmp; 
                 _image.ProcessingImage = bmp;
-                _image.ViewImage = bmp;                            
+                _image.ViewImage = bmp;
+
+                pictureBox1.BorderStyle = BorderStyle.FixedSingle;                
+                EnableMenuBarToolstrips();
+                RescalePictureBox();
             }
         }
 
+        private void RescalePictureBox()
+        {
+            int pictrueWidth = _image.ViewImage.Width;
+            int pictrueHeight = _image.ViewImage.Height;
+            int panelWidth = this.panel1.Width;
+            int panelHeight = this.panel1.Height;
+
+            int verticalPadding = 0;
+            int horizontalPadding = 0;
+            if (pictrueWidth < panelWidth)
+            {
+                 horizontalPadding = (panelWidth -pictrueWidth) / 2;
+               
+            }
+           
+            if(pictrueHeight < panelHeight)
+            {
+                 verticalPadding = (panelHeight - pictrueHeight) / 2;            
+            }
+
+            panel1.Padding = new Padding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
+        }
+        private void EnableMenuBarToolstrips()
+        {
+            this.filtersToolStripMenuItem.Enabled = true;
+            this.shapeToolStripMenuItem.Enabled = true;
+            this.generatorToolStripMenuItem.Enabled = true;
+            this.statisticToolStripMenuItem.Enabled = true;
+        }
         private void binarizationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_image.OriginalImage != null)
@@ -194,7 +237,7 @@ namespace image_processing
 
                 shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
                 Dictionary<Guid, int> dictionary = new Dictionary<Guid, int>();
-                List<PoorData> list = _processor.BlobsMomentum();
+                List<PoreData> list = _processor.BlobsMomentum();
 
                 await Task.Run(() =>
                 {
@@ -240,7 +283,7 @@ namespace image_processing
                 
                var bmp = await Task.Run(() => generator.GenerateMicrostructure(dictionary, list));
                 progressBar.Dispose();
-                bmp = _processor.ConvertTo16bpp(bmp);
+                bmp = _processor.ConvertToGrayscale(bmp);
                 _image.ViewImage = bmp;
               
             }
@@ -277,7 +320,9 @@ namespace image_processing
             }
         }
 
-        private async void analyzeShapesToolStripMenuItem_Click(object sender, EventArgs e)
+       
+
+        private async void analyzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             progressBar = new GeneratorProgressBar
             {
@@ -287,7 +332,7 @@ namespace image_processing
             await Task.Run(() => _processor.FindShapes(_image.ViewImage));
             shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
             Dictionary<Guid, int> dictionary = new Dictionary<Guid, int>();
-            List<PoorData> list = _processor.BlobsMomentum();
+            List<PoreData> list = _processor.BlobsMomentum();
 
             await Task.Run(() =>
             {
@@ -318,7 +363,7 @@ namespace image_processing
                 }
             });
 
-            pictureBox1.MouseClick += PictureBox1_MouseClick;
+
             progressBar.Close();
         }
     }

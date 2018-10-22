@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utilities\PoorData.cs" />
+    <Compile Include="Utilities\PoreData.cs" />
     <Compile Include="Utilities\GlobalSettings.cs" />
     <Compile Include="Utilities\MicrostructureGenerator.cs" />
     <Compile Include="Utilities\ShapeAnalyzer.cs" />
@@ -71,11 +71,11 @@
     <Compile Include="View\FilterBlobsInputBox.Designer.cs">
       <DependentUpon>FilterBlobsInputBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Form1.cs">
+    <Compile Include="View\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="View\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -112,8 +112,8 @@
     <EmbeddedResource Include="View\FilterBlobsInputBox.resx">
       <DependentUpon>FilterBlobsInputBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="View\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

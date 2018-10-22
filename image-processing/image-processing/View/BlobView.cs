@@ -9,8 +9,8 @@ namespace image_processing.View
     public partial class BlobView : Form
     {
         private ShapeAnalyzer _shapeAnalyzer;
-        PoorData pordata;
-        public BlobView(Blob blob,ShapeAnalyzer shapeAnalyzer,PoorData data)
+        PoreData pordata;
+        public BlobView(Blob blob,ShapeAnalyzer shapeAnalyzer,PoreData data)
         {
             InitializeComponent();
 

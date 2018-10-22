@@ -21,8 +21,8 @@ namespace image_processing.Utilities
         Blob GetBlobAtPixel(int x, int y);
         double GetPoresVolume(Bitmap bitmap);
         List<int> BlolbsArea(Bitmap bitmap);
-        List<PoorData> BlobsMomentum();
-        Bitmap ConvertTo16bpp(Bitmap original);
+        List<PoreData> BlobsMomentum();
+        Bitmap ConvertToGrayscale(Bitmap original);
         Bitmap FilterBloobs(Bitmap bitmap, int minWidth, int minHeight);
     }
 }

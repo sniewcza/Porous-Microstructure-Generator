@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace image_processing.Utilities
 {
-    public class PoorData
+    public class PoreData
     {
         private AForge.IntPoint _centerOfgravity;
         private Guid _shapeId;     
@@ -33,20 +33,20 @@ namespace image_processing.Utilities
         public double Area { get => _area; set => _area = value; }
         public Guid ShapeId { get => _shapeId; set => _shapeId = value; }
         public Blob Blob { get => _blob;}
+        private int[,] _bmpData;
 
-        public PoorData(Blob blob,Bitmap bitmap, List<AForge.IntPoint> edgePoints)
+        public PoreData(Blob blob,Bitmap bitmap, List<AForge.IntPoint> edgePoints)
         {
             this._blob = blob;
             this._centerOfgravity = blob.CenterOfGravity.Round(); ;          
             this._area = blob.Area;
             _bmp = bitmap;
             _edgePoints = edgePoints;
-         
-
+            this._bmpData = InitializeBmpData(bitmap);
             double m00 = getMomentum(0, 0);
-
             _centralX = getMomentum(1, 0) /m00;
             _centralY = getMomentum(0, 1) / m00;
+
             M1 = (getCentralMomentum(2, 0) + getCentralMomentum(0, 2)) / Math.Pow(m00, 2);
 
             M2 = (Math.Pow(getCentralMomentum(2, 0) + getCentralMomentum(0, 2), 2) + 4 * Math.Pow(getCentralMomentum(1, 1), 2)) / Math.Pow(m00, 4);
@@ -65,18 +65,27 @@ namespace image_processing.Utilities
 
             M7 = (getCentralMomentum(2, 0) * getCentralMomentum(0, 2) - Math.Pow(getCentralMomentum(1, 1), 2)) / Math.Pow(m00, 4);
 
-           // ComputeLp1();
-            ComputeM();
+          
+            M = ComputeM();
          
         }
 
-        
+        private int[,] InitializeBmpData(Bitmap bitmap)
+        {
+            int[,] bmpData = new int[bitmap.Width, bitmap.Height];
+
+            for (int i = 0; i < bitmap.Width; i++)
+                for (int j = 0; j < bitmap.Height; j++)
+                    bmpData[i, j] = bitmap.GetPixel(i, j).ToArgb() == Color.Black.ToArgb() ? 1 : 0;
+
+            return bmpData;
+        }
         private double getMomentum(int Ptier, int Qtier)
         {        
             double momentum = 0;
             for (int i = 0; i < _bmp.Width; i++)
-                for (int j = 0; j < _bmp.Height; j++)
-                    momentum += (_bmp.GetPixel(i, j).ToArgb() == Color.Black.ToArgb() ? 1 : 0) * Math.Pow(i, Ptier) * Math.Pow(j, Qtier);
+                for (int j = 0; j < _bmp.Height; j++)                  
+                    momentum += _bmpData[i, j] * Math.Pow(i, Ptier) * Math.Pow(j, Qtier);
 
             return momentum;
         }
@@ -85,11 +94,11 @@ namespace image_processing.Utilities
 
         private double getCentralMomentum(int Ptier, int Qtier)
         {
-            int black = Color.Black.ToArgb();
+           
             double momentum = 0;
             for (int i = 0; i < _bmp.Width; i++)
-                for (int j = 0; j < _bmp.Height; j++)
-                    momentum += (_bmp.GetPixel(i, j).ToArgb() == black ? 1 : 0) * Math.Pow(i-CentralX, Ptier) * Math.Pow(j-CentralY, Qtier);
+                for (int j = 0; j < _bmp.Height; j++)                   
+                    momentum += _bmpData[i, j] * Math.Pow(i - CentralX, Ptier) * Math.Pow(j - CentralY, Qtier);
 
             return momentum;
         }
@@ -114,11 +123,11 @@ namespace image_processing.Utilities
             Lp1 = rmin / rmax;
         }
 
-        private void ComputeM()
+        private double ComputeM()
         {
             double m = 0.5 * _edgePoints.Count / Math.Sqrt(3.14 * Area) - 1;
 
-            M = m < 0 ? 0 : m;
+           return m < 0 ? 0 : m;
         }
 
        

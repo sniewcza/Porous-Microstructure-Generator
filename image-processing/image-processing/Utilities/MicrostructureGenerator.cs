@@ -28,7 +28,7 @@ namespace image_processing.Utilities
             _bmp.UnlockBits(bmpData);
             
         }
-        public  Bitmap GenerateMicrostructure(Dictionary<Guid,int> blobsQuantity, List<PoorData> list)
+        public  Bitmap GenerateMicrostructure(Dictionary<Guid,int> blobsQuantity, List<PoreData> list)
         {
            
            var ordered = list.OrderByDescending(bm => bm.Blob.Area).GroupBy(bm=>bm.ShapeId);
@@ -42,7 +42,7 @@ namespace image_processing.Utilities
             return _bmp; 
         }
 
-        private void GenerateBlobs (PoorData blobMomentum, int quantity)
+        private void GenerateBlobs (PoreData blobMomentum, int quantity)
         {
             
             Random random = new Random();
