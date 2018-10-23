@@ -13,8 +13,6 @@ namespace image_processing.Utilities
 {
     class ImageProcessor : IImageProcessor
     {
-        private Blob[] _blobs;
-        public List<PoreData> BlobsMomemntum;
         private BlobCounter _blobCounter;
 
         public event EventHandler OnProgress;
@@ -24,63 +22,46 @@ namespace image_processing.Utilities
         public Bitmap Binarization(Bitmap bitmap, int threshold)
         {
             Threshold filter = new Threshold(threshold);
-
             return filter.Apply(bitmap);
-
         }
 
         public Bitmap Closing(Bitmap bitmap)
         {
-        
             Closing filter = new Closing();
-
             return filter.Apply(bitmap);
         }
 
         public Bitmap Dilatation(Bitmap bitmap)
         {
             Dilatation filter = new Dilatation();
-
             return filter.Apply(bitmap);
         }
 
         public Bitmap Erosion(Bitmap bitmap)
         {
             Erosion filter = new Erosion();
-
             return filter.Apply(bitmap);
         }
-      
-        public Blob GetBlobAtPixel(int x,int y)
-        {
-            var blob = _blobs?.FirstOrDefault((b) => b.Rectangle.Contains(x, y));
 
-            return blob ;
-        }
-
-        public void FindShapes(Bitmap bitmap)
+        public List<PoreData> FindShapes(Bitmap bitmap)
         {
             var reversedbmp = ReverseBitmapColors(bitmap);
-             _blobCounter = new BlobCounter(reversedbmp);
+            _blobCounter = new BlobCounter(reversedbmp);
+            var blobs = _blobCounter.GetObjects(reversedbmp, false);
+            PoreData[] poreData = new PoreData[blobs.Length];
 
-          
-
-            
-            _blobs = _blobCounter.GetObjects(reversedbmp, false);
-            PoreData[] blobMomentum = new PoreData[_blobs.Length];
-
-            OnStart(this, _blobs.Length);
+            OnStart(this, blobs.Length);
             // var bitmapdata = bmp.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
 
             //SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
-           // var g = Graphics.FromImage(bmp);
+            // var g = Graphics.FromImage(bmp);
 
             //shapeChecker.MinAcceptableDistortion = 0.5f;
             //shapeChecker.RelativeDistortionLimit = 0.07f;
 
             //foreach (var blob in _blobs)
             //{
-                
+
             //    var edgePoints = _blobCounter.GetBlobsEdgePoints(blob);
             //    var points = edgePoints.Select(p => new Point(p.X, p.Y)).ToArray();
             //    if(edgePoints.Count !=1 )
@@ -104,29 +85,25 @@ namespace image_processing.Utilities
             //    //        break;
             //    //}
 
-                
+
             //    BlobsMomemntum.Add(new BlobMomentum(blob,ReverseBitmapColors( blob.Image.ToManagedImage()), edgePoints));
 
-                
+
             //}
 
-            Parallel.For(0, _blobs.Length, index =>
+            Parallel.For(0, blobs.Length, index =>
             {
-                var edgePoints = _blobCounter.GetBlobsEdgePoints(_blobs[index]);
-                blobMomentum[index] = new PoreData(_blobs[index], ReverseBitmapColors( _blobs[index].Image.ToManagedImage()), edgePoints);
-                OnProgress(this,new EventArgs());
+                var edgePoints = _blobCounter.GetBlobsEdgePoints(blobs[index]);
+                poreData[index] = new PoreData(blobs[index], ReverseBitmapColors(blobs[index].Image.ToManagedImage()), edgePoints);
+                OnProgress(this, new EventArgs());
             });
-          
-            BlobsMomemntum = blobMomentum.ToList();
 
-           
-          
+            return poreData.ToList();
         }
 
         public Bitmap Opening(Bitmap bitmap)
         {
             Opening filter = new Opening();
-
             return filter.Apply(bitmap);
         }
 
@@ -157,11 +134,8 @@ namespace image_processing.Utilities
         public Bitmap CreateUnindexedBitmap(Bitmap original)
         {
             var unindexedbmp = new Bitmap(original.Width, original.Height);
-
             var originalbmpData = original.LockBits(new Rectangle(0, 0, original.Width, original.Height), ImageLockMode.ReadOnly, original.PixelFormat);
-
             var unindexedbmpData = unindexedbmp.LockBits(new Rectangle(0, 0, original.Width, original.Height), ImageLockMode.ReadWrite, original.PixelFormat);
-
             var originalbmpptr = originalbmpData.Scan0;
 
             var unindexedbmpptr = unindexedbmpData.Scan0;
@@ -178,39 +152,28 @@ namespace image_processing.Utilities
 
             unindexedbmp.UnlockBits(unindexedbmpData);
 
-            //for (int i = 0; i < original.Width; i++)
-            //    for (int j = 0; j < original.Height; j++)
-            //        unindexedbmp.SetPixel(i, j, original.GetPixel(i, j));
             return unindexedbmp;
         }
 
         public Bitmap Skeletonization(Bitmap bitmap)
         {
             SimpleSkeletonization filter = new SimpleSkeletonization(255, 0);
-
             return filter.Apply(bitmap);
         }
 
         public double GetPoresVolume(Bitmap bitmap)
         {
-          //  var binaryBmp = Binarization(bitmap, 60);
-
             var bitmapdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-
             var ptr = bitmapdata.Scan0;
-
             int bytes = Math.Abs(bitmapdata.Stride) * bitmap.Height;
             byte[] rgbValues = new byte[bytes];
             Marshal.Copy(ptr, rgbValues, 0, bytes);
-           bitmap.UnlockBits(bitmapdata);
-
-            
-           int total = rgbValues.Where(b => b == 0).Count();
-
-            return Math.Round((total/(double)rgbValues.Length)*100,2);
+            bitmap.UnlockBits(bitmapdata);
+            int total = rgbValues.Where(b => b == 0).Count();
+            return Math.Round((total / (double)rgbValues.Length) * 100, 2);
         }
 
-        public List<int> BlolbsArea(Bitmap bitmap)
+        public List<int> BlobsArea(Bitmap bitmap)
         {
             Bitmap reversedBmp = ReverseBitmapColors(bitmap);
 
@@ -231,31 +194,23 @@ namespace image_processing.Utilities
 
             return BlobsArea;
         }
-
-        public List<PoreData> BlobsMomentum()
-        {
-            return this.BlobsMomemntum;
-        }
-
+    
         public Bitmap ConvertToGrayscale(Bitmap original)
-        {          
+        {
             if (original.PixelFormat != PixelFormat.Format8bppIndexed && original.PixelFormat != PixelFormat.Format16bppGrayScale)
             {
-
                 return Grayscale.CommonAlgorithms.RMY.Apply(original);
             }
             else
             {
                 return original;
             }
-           // return newBitmap;
         }
 
         public Bitmap FilterBloobs(Bitmap bitmap, int minWidth, int minHeight)
         {
             BlobsFiltering filter = new BlobsFiltering(minWidth, minHeight, int.MaxValue, int.MaxValue);
-
-            return ReverseBitmapColors( filter.Apply(ReverseBitmapColors(bitmap)));
+            return ReverseBitmapColors(filter.Apply(ReverseBitmapColors(bitmap)));
         }
     }
 }

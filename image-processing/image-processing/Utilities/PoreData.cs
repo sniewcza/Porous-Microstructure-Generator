@@ -1,11 +1,7 @@
 ﻿using AForge.Imaging;
-using AForge.Math;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Linq;
 
 namespace image_processing.Utilities
 {

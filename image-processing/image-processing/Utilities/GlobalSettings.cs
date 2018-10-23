@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace image_processing.Utilities
+﻿namespace image_processing.Utilities
 {
-   public class GlobalSettings
+    public class GlobalSettings
     {
-        public double SimilarityCoefficient { get; set; }
+        public double SimilarityCoefficient { get; set; } = 0.5;
         public bool NormalizeBlobArea { get; set; }
     }
 }

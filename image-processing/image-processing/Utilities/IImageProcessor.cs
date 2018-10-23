@@ -1,5 +1,4 @@
-﻿using AForge.Imaging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -17,11 +16,9 @@ namespace image_processing.Utilities
         Bitmap Closing(Bitmap bitmap);
         Bitmap Skeletonization(Bitmap bitmap);
         Bitmap ReverseBitmapColors(Bitmap bitmap);
-        void FindShapes(Bitmap bitmap);
-        Blob GetBlobAtPixel(int x, int y);
+        List<PoreData> FindShapes(Bitmap bitmap);      
         double GetPoresVolume(Bitmap bitmap);
-        List<int> BlolbsArea(Bitmap bitmap);
-        List<PoreData> BlobsMomentum();
+        List<int> BlobsArea(Bitmap bitmap);
         Bitmap ConvertToGrayscale(Bitmap original);
         Bitmap FilterBloobs(Bitmap bitmap, int minWidth, int minHeight);
     }

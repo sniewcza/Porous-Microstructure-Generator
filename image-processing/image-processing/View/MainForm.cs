@@ -12,23 +12,22 @@ namespace image_processing
     public partial class Form1 : Form
     {
         Utilities.Image _image;
+        bool isBinarized;
         IImageProcessor _processor;
         ShapeAnalyzer shapeAnalyzer;
         GlobalSettings globalSettings;
         GeneratorProgressBar progressBar;
+        List<PoreData> _poresData;
 
         public Form1(IImageProcessor imageProcessor)
         {
-            InitializeComponent();         
+            InitializeComponent();
             _processor = imageProcessor;
             _image = new Utilities.Image();
             _image.OnViewImageChange += _image_OnViewImageChange;
             pictureBox1.MouseClick += PictureBox1_MouseClick;
-            globalSettings = new GlobalSettings()
-            {
-                SimilarityCoefficient = 0.2
-            };
-
+            globalSettings = new GlobalSettings();
+            
             _processor.OnStart += (s, blobsNumber) =>
             {
                 progressBar.setMaxValue(blobsNumber * 2);
@@ -39,24 +38,37 @@ namespace image_processing
                 progressBar.Increment();
             };
 
+            pictureBox1.MouseMove += (s, a) =>
+             {
+                 if (pictureBox1.Image != null)
+                 {
+                     cordsLabel.Text = $"({a.X},{a.Y}";
+                     grayLabel.Text = $"Gray: {_image.ViewImage.GetPixel(a.X, a.Y).R}";
+                 }
+             };
+
+            pictureBox1.MouseLeave += (s, a) =>
+            {
+                cordsLabel.Text = string.Empty;
+                grayLabel.Text = string.Empty;
+            };
             this.SizeChanged += Form1_ResizeEnd;
         }
 
         private void Form1_ResizeEnd(object sender, EventArgs e)
         {
-            if(_image.ViewImage != null)
+            if (_image.ViewImage != null)
             {
-               RescalePictureBox();
+                RescalePictureBox();
             }
         }
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            var blob = _processor.GetBlobAtPixel(e.X, e.Y);
-            if (blob != null)
+            var poreData = _poresData?.FirstOrDefault(data => data.Blob.Rectangle.Contains(e.X, e.Y));
+            if (poreData != null)
             {
-                var bm = _processor.BlobsMomentum().First(blobinfo => blobinfo.Blob.ID == blob.ID);
-                BlobView form = new BlobView(blob,shapeAnalyzer,bm);
+                BlobView form = new BlobView(shapeAnalyzer, poreData);
                 form.Show();
             }
         }
@@ -64,21 +76,23 @@ namespace image_processing
         private void _image_OnViewImageChange(object sender, EventArgs e)
         {
             this.pictureBox1.Image = _image.ViewImage;
+            this.volumeLabel.Text = $"Pores volume: {_processor.GetPoresVolume(_image.ViewImage)}% ";
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(ImageFileDialog.ShowDialog() == DialogResult.OK)
+            if (ImageFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var bmp = _processor.ConvertToGrayscale(new Bitmap(ImageFileDialog.FileName));
-               
-                _image.OriginalImage = bmp; 
+
+                _image.OriginalImage = bmp;
                 _image.ProcessingImage = bmp;
                 _image.ViewImage = bmp;
 
-                pictureBox1.BorderStyle = BorderStyle.FixedSingle;                
+                pictureBox1.BorderStyle = BorderStyle.FixedSingle;
                 EnableMenuBarToolstrips();
                 RescalePictureBox();
+                sizeLabel.Text = $"{bmp.Width} x {bmp.Height}";
             }
         }
 
@@ -93,17 +107,17 @@ namespace image_processing
             int horizontalPadding = 0;
             if (pictrueWidth < panelWidth)
             {
-                 horizontalPadding = (panelWidth -pictrueWidth) / 2;
-               
+                horizontalPadding = (panelWidth - pictrueWidth) / 2;
             }
-           
-            if(pictrueHeight < panelHeight)
+
+            if (pictrueHeight < panelHeight)
             {
-                 verticalPadding = (panelHeight - pictrueHeight) / 2;            
+                verticalPadding = (panelHeight - pictrueHeight) / 2;
             }
 
             panel1.Padding = new Padding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
         }
+
         private void EnableMenuBarToolstrips()
         {
             this.filtersToolStripMenuItem.Enabled = true;
@@ -111,6 +125,7 @@ namespace image_processing
             this.generatorToolStripMenuItem.Enabled = true;
             this.statisticToolStripMenuItem.Enabled = true;
         }
+
         private void binarizationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_image.OriginalImage != null)
@@ -119,18 +134,17 @@ namespace image_processing
                 form.ThresholdChanged += (textbox, args) =>
                 {
                     int threshold = Convert.ToInt32((textbox as MaskedTextBox).Text);
-                   form.PictureBox1.Image = _image.ProcessingImage = _processor.Binarization(_image.OriginalImage, threshold);
+                    form.PictureBox1.Image = _image.ProcessingImage = _processor.Binarization(_image.OriginalImage, threshold);
                 };
-               if( form.ShowDialog() == DialogResult.OK)
+                if (form.ShowDialog() == DialogResult.OK)
                 {
                     _image.ViewImage = (_image.ProcessingImage.Clone() as Bitmap);
+                    isBinarized = true;
                 }
 
                 form.Dispose();
             }
         }
-
-       
 
         private void erosionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -192,29 +206,22 @@ namespace image_processing
             }
         }
 
-       
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
 
             saveFileDialog.AddExtension = true;
             saveFileDialog.DefaultExt = "bmp";
-            if(saveFileDialog.ShowDialog() == DialogResult.OK)
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 _image.ViewImage.Save(saveFileDialog.FileName);
             }
-        }
-
-        private void volumeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show($"Before {_processor.GetPoresVolume(_processor.Binarization(_image.OriginalImage,60))} \n After {_processor.GetPoresVolume(_image.ViewImage)}");
-        }
+        }    
 
         private void sizeDistributionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<int> sizes = _processor.BlolbsArea(_image.ProcessingImage);
-            
+            List<int> sizes = _processor.BlobsArea(_image.ViewImage);
+
             SizeDistributionView distributionView = new SizeDistributionView(sizes);
 
             distributionView.Show();
@@ -224,79 +231,52 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-
-                progressBar = new GeneratorProgressBar
+                if (!isBinarized)
                 {
-                    Info = "Finding shapes"
-                };
-                progressBar.Show();
-                
-                await Task.Run( ()=>_processor.FindShapes(_image.ProcessingImage));
-
-                progressBar.Info = "Analyzing shapes";
-
-                shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
-                Dictionary<Guid, int> dictionary = new Dictionary<Guid, int>();
-                List<PoreData> list = _processor.BlobsMomentum();
-
-                await Task.Run(() =>
+                    MessageBox.Show("Image should be binarized first \n Filters->Binarization");
+                }
+                else
                 {
-
-                    if (globalSettings.NormalizeBlobArea)
+                    progressBar = new GeneratorProgressBar
                     {
-                        var areas = list.Select(item => item.Area);
-                        double max = areas.Max();
-                        double min = areas.Min();
-                        double range = max - min;
-                        list.ForEach(data => data.Area = (data.Area - min) / range);
-                    }
+                        Info = "Finding shapes"
+                    };
 
-                    for (int i = 0; i < list.Count; i++)
+                    progressBar.Show();
+
+                    _poresData = await Task.Run(() => _processor.FindShapes(_image.ProcessingImage));
+
+                    progressBar.Info = "Analyzing shapes";
+
+                    shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
+
+                    await AnalyzeShapesAsync();
+
+                    progressBar.Info = "Generating microstructure";
+
+                    MicrostructureGenerator generator = new MicrostructureGenerator(_image.OriginalImage.Width, _image.OriginalImage.Height);
+
+                    generator.OnProgress += (s, eh) =>
                     {
-                        var bm = list[i];
-                        var shapeId = shapeAnalyzer.Analyze(bm.getShapeDescriptor());
-                        bm.ShapeId = shapeId;
-                        if (dictionary.ContainsKey(shapeId))
-                        {
-                            dictionary[shapeId]++;
-                        }
-                        else
-                        {
-                            dictionary.Add(shapeId, 1);
-                        }
-
                         progressBar.Increment();
-                    }
-                });
+                    };
 
-              
-                progressBar.Info = "Generating microstructure";
-                
-                MicrostructureGenerator generator = new MicrostructureGenerator(_image.OriginalImage.Width, _image.OriginalImage.Height);
-                
-                
-                generator.OnProgress += (s, eh) =>
-                {
-                    progressBar.Increment();
-                };
+                    var bmp = await Task.Run(() => generator.GenerateMicrostructure(_poresData));
+                    progressBar.Dispose();
+                    bmp = _processor.ConvertToGrayscale(bmp);
+                    _image.ViewImage = bmp;
 
-                
-               var bmp = await Task.Run(() => generator.GenerateMicrostructure(dictionary, list));
-                progressBar.Dispose();
-                bmp = _processor.ConvertToGrayscale(bmp);
-                _image.ViewImage = bmp;
-              
+                    _poresData.Clear();
+                }
             }
         }
 
-       
-
         private void filterBlobsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(_image.ViewImage != null)
+            if (_image.ViewImage != null)
             {
                 FilterBlobsInputBox form = new FilterBlobsInputBox();
-                if(DialogResult.OK == form.ShowDialog())
+                if (DialogResult.OK == form.ShowDialog())
                 {
                     var bmp = _processor.FilterBloobs(_image.ProcessingImage, form.minWidth, form.minHeight);
 
@@ -304,67 +284,65 @@ namespace image_processing
 
                     form.Dispose();
                 }
-
-                
             }
         }
 
         private void aToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShapeAnalyzerSettingsView form = new ShapeAnalyzerSettingsView(globalSettings);
-            
-            if(form.ShowDialog() == DialogResult.OK)
+
+            if (form.ShowDialog() == DialogResult.OK)
             {
                 globalSettings.SimilarityCoefficient = form.SimilarityCoefficient;
                 globalSettings.NormalizeBlobArea = form.NormalizePoreArea;
             }
         }
 
-       
-
         private async void analyzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            progressBar = new GeneratorProgressBar
+            if (isBinarized)
             {
-                Info = "Finding shapes"
-            };
-            progressBar.Show();
-            await Task.Run(() => _processor.FindShapes(_image.ViewImage));
-            shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
-            Dictionary<Guid, int> dictionary = new Dictionary<Guid, int>();
-            List<PoreData> list = _processor.BlobsMomentum();
+                progressBar = new GeneratorProgressBar
+                {
+                    Info = "Finding shapes"
+                };
 
-            await Task.Run(() =>
+                progressBar.Show();
+
+                _poresData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
+                shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);               
+
+                await AnalyzeShapesAsync();
+
+                progressBar.Close();
+            }
+            else
             {
-                if (globalSettings.NormalizeBlobArea)
-                {
-                    var areas = list.Select(item => item.Area);
-                    double max = areas.Max();
-                    double min = areas.Min();
-                    double range = max - min;
-                    list.ForEach(data => data.Area = (data.Area - min) / range);
-                }
+                MessageBox.Show("Image should be binarized first \n Filters->Binarization");
+            }
+        }
 
-                for (int i = 0; i < list.Count; i++)
-                {
-                    var bm = list[i];
-                    var shapeId = shapeAnalyzer.Analyze(bm.getShapeDescriptor());
-                    bm.ShapeId = shapeId;
-                    if (dictionary.ContainsKey(shapeId))
-                    {
-                        dictionary[shapeId]++;
-                    }
-                    else
-                    {
-                        dictionary.Add(shapeId, 1);
-                    }
+        private Task AnalyzeShapesAsync()
+        {
+            return Task.Run(() =>
+           {
+               if (globalSettings.NormalizeBlobArea)
+               {
+                   var areas = _poresData.Select(item => item.Area);
+                   double max = areas.Max();
+                   double min = areas.Min();
+                   double range = max - min;
+                   _poresData.ForEach(data => data.Area = (data.Area - min) / range);
+               }
 
-                    progressBar.Increment();
-                }
-            });
-
-
-            progressBar.Close();
+               for (int i = 0; i < _poresData.Count; i++)
+               {
+                   var bm = _poresData[i];
+                   var shapeId = shapeAnalyzer.Analyze(bm.getShapeDescriptor());
+                   bm.ShapeId = shapeId;
+                   progressBar.Increment();
+               }
+           });
         }
     }
 }

@@ -46,16 +46,21 @@
             this.generatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importShapeAnalyzerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statisticToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.volumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sizeDistributionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ImageFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.sizeLabel = new System.Windows.Forms.Label();
+            this.cordsLabel = new System.Windows.Forms.Label();
+            this.grayLabel = new System.Windows.Forms.Label();
+            this.volumeLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -205,24 +210,16 @@
             // statisticToolStripMenuItem
             // 
             this.statisticToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.volumeToolStripMenuItem,
             this.sizeDistributionToolStripMenuItem});
             this.statisticToolStripMenuItem.Enabled = false;
             this.statisticToolStripMenuItem.Name = "statisticToolStripMenuItem";
             this.statisticToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.statisticToolStripMenuItem.Text = "Statistic";
             // 
-            // volumeToolStripMenuItem
-            // 
-            this.volumeToolStripMenuItem.Name = "volumeToolStripMenuItem";
-            this.volumeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.volumeToolStripMenuItem.Text = "Volume";
-            this.volumeToolStripMenuItem.Click += new System.EventHandler(this.volumeToolStripMenuItem_Click);
-            // 
             // sizeDistributionToolStripMenuItem
             // 
             this.sizeDistributionToolStripMenuItem.Name = "sizeDistributionToolStripMenuItem";
-            this.sizeDistributionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sizeDistributionToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.sizeDistributionToolStripMenuItem.Text = "Size Distribution";
             this.sizeDistributionToolStripMenuItem.Click += new System.EventHandler(this.sizeDistributionToolStripMenuItem_Click);
             // 
@@ -237,7 +234,7 @@
             // aToolStripMenuItem
             // 
             this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aToolStripMenuItem.Text = "Shape analyzer";
             this.aToolStripMenuItem.Click += new System.EventHandler(this.aToolStripMenuItem_Click);
             // 
@@ -247,19 +244,20 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
-            this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.panel1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(912, 428);
+            this.panel1.Size = new System.Drawing.Size(912, 425);
             this.panel1.TabIndex = 1;
             // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 1);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(912, 388);
+            this.pictureBox1.Size = new System.Drawing.Size(100, 100);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -268,13 +266,74 @@
             // 
             this.ImageFileDialog.FileName = "openFileDialog1";
             // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.volumeLabel);
+            this.panel2.Controls.Add(this.grayLabel);
+            this.panel2.Controls.Add(this.cordsLabel);
+            this.panel2.Controls.Add(this.sizeLabel);
+            this.panel2.Location = new System.Drawing.Point(12, 454);
+            this.panel2.Name = "panel2";
+            this.panel2.Padding = new System.Windows.Forms.Padding(2);
+            this.panel2.Size = new System.Drawing.Size(912, 23);
+            this.panel2.TabIndex = 2;
+            // 
+            // sizeLabel
+            // 
+            this.sizeLabel.AutoSize = true;
+            this.sizeLabel.BackColor = System.Drawing.Color.Transparent;
+            this.sizeLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.sizeLabel.Location = new System.Drawing.Point(5, 3);
+            this.sizeLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.sizeLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.sizeLabel.Name = "sizeLabel";
+            this.sizeLabel.Size = new System.Drawing.Size(100, 15);
+            this.sizeLabel.TabIndex = 0;
+            // 
+            // cordsLabel
+            // 
+            this.cordsLabel.AutoSize = true;
+            this.cordsLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.cordsLabel.Location = new System.Drawing.Point(111, 3);
+            this.cordsLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.cordsLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.cordsLabel.Name = "cordsLabel";
+            this.cordsLabel.Size = new System.Drawing.Size(100, 15);
+            this.cordsLabel.TabIndex = 1;
+            // 
+            // grayLabel
+            // 
+            this.grayLabel.AutoSize = true;
+            this.grayLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grayLabel.Location = new System.Drawing.Point(217, 3);
+            this.grayLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.grayLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.grayLabel.Name = "grayLabel";
+            this.grayLabel.Size = new System.Drawing.Size(100, 15);
+            this.grayLabel.TabIndex = 2;
+            // 
+            // volumeLabel
+            // 
+            this.volumeLabel.AutoSize = true;
+            this.volumeLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.volumeLabel.Location = new System.Drawing.Point(323, 3);
+            this.volumeLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.volumeLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.volumeLabel.Name = "volumeLabel";
+            this.volumeLabel.Size = new System.Drawing.Size(100, 15);
+            this.volumeLabel.TabIndex = 3;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(936, 467);
+            this.ClientSize = new System.Drawing.Size(936, 476);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
+            this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
@@ -284,6 +343,8 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -307,7 +368,6 @@
         private System.Windows.Forms.ToolStripMenuItem closingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem skeletonizationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem statisticToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem volumeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sizeDistributionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importShapeAnalyzerToolStripMenuItem;
@@ -316,6 +376,11 @@
         private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem shapeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analyzeToolStripMenuItem;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label sizeLabel;
+        private System.Windows.Forms.Label volumeLabel;
+        private System.Windows.Forms.Label grayLabel;
+        private System.Windows.Forms.Label cordsLabel;
     }
 }
 
