@@ -27,7 +27,7 @@ namespace image_processing
             _image.OnViewImageChange += _image_OnViewImageChange;
             pictureBox1.MouseClick += PictureBox1_MouseClick;
             globalSettings = new GlobalSettings();
-            
+
             _processor.OnStart += (s, blobsNumber) =>
             {
                 progressBar.setMaxValue(blobsNumber * 2);
@@ -81,18 +81,28 @@ namespace image_processing
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             if (ImageFileDialog.ShowDialog() == DialogResult.OK)
             {
-                var bmp = _processor.ConvertToGrayscale(new Bitmap(ImageFileDialog.FileName));
 
-                _image.OriginalImage = bmp;
-                _image.ProcessingImage = bmp;
-                _image.ViewImage = bmp;
+                try
+                {
+                    var bmp = _processor.ConvertToGrayscale(new Bitmap(ImageFileDialog.FileName));
+                    _image.OriginalImage = bmp;                  
+                    _image.ViewImage = bmp;
 
-                pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-                EnableMenuBarToolstrips();
-                RescalePictureBox();
-                sizeLabel.Text = $"{bmp.Width} x {bmp.Height}";
+                    pictureBox1.BorderStyle = BorderStyle.FixedSingle;
+                    EnableMenuBarToolstrips();
+                    RescalePictureBox();
+                    sizeLabel.Text = $"{bmp.Width} x {bmp.Height}";
+                    isBinarized = false;
+                }
+                catch (ArgumentException ex)
+                {
+                    var extension = ImageFileDialog.FileName.Split('.');
+                    MessageBox.Show($"Could not open file with .{extension[extension.Length - 1]} format",
+                        "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -120,6 +130,8 @@ namespace image_processing
 
         private void EnableMenuBarToolstrips()
         {
+            this.saveToolStripMenuItem.Enabled = true;
+            this.reloadToolStripMenuItem.Enabled = true;
             this.filtersToolStripMenuItem.Enabled = true;
             this.shapeToolStripMenuItem.Enabled = true;
             this.generatorToolStripMenuItem.Enabled = true;
@@ -134,11 +146,11 @@ namespace image_processing
                 form.ThresholdChanged += (textbox, args) =>
                 {
                     int threshold = Convert.ToInt32((textbox as MaskedTextBox).Text);
-                    form.PictureBox1.Image = _image.ProcessingImage = _processor.Binarization(_image.OriginalImage, threshold);
+                    form.PictureBox1.Image = _processor.Binarization(_image.OriginalImage, threshold);
                 };
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    _image.ViewImage = (_image.ProcessingImage.Clone() as Bitmap);
+                    _image.ViewImage = form.PictureBox1.Image as Bitmap;
                     isBinarized = true;
                 }
 
@@ -150,9 +162,8 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Erosion(_image.ProcessingImage);
+                var bmp = _processor.Erosion(_image.ViewImage);
                 _image.ViewImage = bmp;
-                _image.ProcessingImage = bmp;
             }
         }
 
@@ -160,9 +171,8 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Dilatation(_image.ProcessingImage);
+                var bmp = _processor.Dilatation(_image.ViewImage);
                 _image.ViewImage = bmp;
-                _image.ProcessingImage = bmp;
             }
         }
 
@@ -170,9 +180,8 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Opening(_image.ProcessingImage);
+                var bmp = _processor.Opening(_image.ViewImage);
                 _image.ViewImage = bmp;
-                _image.ProcessingImage = bmp;
             }
         }
 
@@ -180,9 +189,8 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Closing(_image.ProcessingImage);
+                var bmp = _processor.Closing(_image.ViewImage);
                 _image.ViewImage = bmp;
-                _image.ProcessingImage = bmp;
             }
         }
 
@@ -190,9 +198,8 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _processor.Skeletonization(_image.ProcessingImage);
+                var bmp = _processor.Skeletonization(_image.ViewImage);
                 _image.ViewImage = bmp;
-                _image.ProcessingImage = bmp;
             }
         }
 
@@ -202,7 +209,6 @@ namespace image_processing
             {
                 var bmp = _image.OriginalImage;
                 _image.ViewImage = bmp;
-                _image.ProcessingImage = bmp;
             }
         }
 
@@ -216,7 +222,7 @@ namespace image_processing
             {
                 _image.ViewImage.Save(saveFileDialog.FileName);
             }
-        }    
+        }
 
         private void sizeDistributionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -233,7 +239,11 @@ namespace image_processing
             {
                 if (!isBinarized)
                 {
-                    MessageBox.Show("Image should be binarized first \n Filters->Binarization");
+                    if (BinarizeFirstDialog() == DialogResult.Yes)
+                    {
+                        binarizationToolStripMenuItem_Click(sender, e);
+                        generateMicrostructureToolStripMenuItem_Click(sender, e);
+                    }
                 }
                 else
                 {
@@ -242,27 +252,25 @@ namespace image_processing
                         Info = "Finding shapes"
                     };
 
+                    DisableMenu();
+                    DisablePictureBox();
+
                     progressBar.Show();
-
-                    _poresData = await Task.Run(() => _processor.FindShapes(_image.ProcessingImage));
-
+                    _poresData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
                     progressBar.Info = "Analyzing shapes";
-
-                    shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
-
                     await AnalyzeShapesAsync();
-
                     progressBar.Info = "Generating microstructure";
-
                     MicrostructureGenerator generator = new MicrostructureGenerator(_image.OriginalImage.Width, _image.OriginalImage.Height);
-
                     generator.OnProgress += (s, eh) =>
                     {
                         progressBar.Increment();
                     };
-
                     var bmp = await Task.Run(() => generator.GenerateMicrostructure(_poresData));
-                    progressBar.Dispose();
+                    progressBar.Close();
+
+                    EnableMenu();
+                    EnablePictureBox();
+
                     bmp = _processor.ConvertToGrayscale(bmp);
                     _image.ViewImage = bmp;
 
@@ -278,7 +286,7 @@ namespace image_processing
                 FilterBlobsInputBox form = new FilterBlobsInputBox();
                 if (DialogResult.OK == form.ShowDialog())
                 {
-                    var bmp = _processor.FilterBloobs(_image.ProcessingImage, form.minWidth, form.minHeight);
+                    var bmp = _processor.FilterBloobs(_image.ViewImage, form.minWidth, form.minHeight);
 
                     _image.ViewImage = bmp;
 
@@ -298,6 +306,26 @@ namespace image_processing
             }
         }
 
+        private void DisableMenu()
+        {
+            menuStrip1.Enabled = false;
+        }
+
+        private void DisablePictureBox()
+        {
+            pictureBox1.Enabled = false;
+        }
+
+        private void EnableMenu()
+        {
+            menuStrip1.Enabled = true;
+        }
+
+        private void EnablePictureBox()
+        {
+            pictureBox1.Enabled = true;
+        }
+
         private async void analyzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (isBinarized)
@@ -307,23 +335,39 @@ namespace image_processing
                     Info = "Finding shapes"
                 };
 
+
+                DisableMenu();
+                DisablePictureBox();
+
                 progressBar.Show();
-
                 _poresData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
-                shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);               
-
                 await AnalyzeShapesAsync();
-
                 progressBar.Close();
+
+                EnableMenu();
+                EnablePictureBox();
             }
             else
             {
-                MessageBox.Show("Image should be binarized first \n Filters->Binarization");
+                if (BinarizeFirstDialog() == DialogResult.Yes)
+                {
+                    binarizationToolStripMenuItem_Click(sender, e);
+                    analyzeToolStripMenuItem_Click(sender, e);
+                }
             }
+        }
+
+        private DialogResult BinarizeFirstDialog()
+        {
+            return MessageBox.Show("Image should be binarized first. \n Would you like to binarize?",
+                    "Alert", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
         }
 
         private Task AnalyzeShapesAsync()
         {
+            shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
+
             return Task.Run(() =>
            {
                if (globalSettings.NormalizeBlobArea)

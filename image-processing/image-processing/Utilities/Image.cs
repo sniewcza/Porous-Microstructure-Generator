@@ -19,11 +19,10 @@ namespace image_processing.Utilities
                 OnViewImageChange(this, new EventArgs());
             }
         }
-        public Bitmap ProcessingImage { get; internal set; }
-              
+
         public Image()
         {
-            
+
         }
     }
 }

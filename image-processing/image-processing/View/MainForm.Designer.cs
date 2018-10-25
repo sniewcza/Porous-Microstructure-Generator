@@ -53,10 +53,10 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ImageFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.sizeLabel = new System.Windows.Forms.Label();
-            this.cordsLabel = new System.Windows.Forms.Label();
-            this.grayLabel = new System.Windows.Forms.Label();
             this.volumeLabel = new System.Windows.Forms.Label();
+            this.grayLabel = new System.Windows.Forms.Label();
+            this.cordsLabel = new System.Windows.Forms.Label();
+            this.sizeLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -99,6 +99,7 @@
             // 
             // reloadToolStripMenuItem
             // 
+            this.reloadToolStripMenuItem.Enabled = false;
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
             this.reloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.reloadToolStripMenuItem.Text = "Reload";
@@ -106,6 +107,7 @@
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
@@ -129,49 +131,49 @@
             // binarizationToolStripMenuItem
             // 
             this.binarizationToolStripMenuItem.Name = "binarizationToolStripMenuItem";
-            this.binarizationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.binarizationToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.binarizationToolStripMenuItem.Text = "Binarization";
             this.binarizationToolStripMenuItem.Click += new System.EventHandler(this.binarizationToolStripMenuItem_Click);
             // 
             // erosionToolStripMenuItem
             // 
             this.erosionToolStripMenuItem.Name = "erosionToolStripMenuItem";
-            this.erosionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.erosionToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.erosionToolStripMenuItem.Text = "Erosion";
             this.erosionToolStripMenuItem.Click += new System.EventHandler(this.erosionToolStripMenuItem_Click);
             // 
             // dilatationToolStripMenuItem
             // 
             this.dilatationToolStripMenuItem.Name = "dilatationToolStripMenuItem";
-            this.dilatationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dilatationToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.dilatationToolStripMenuItem.Text = "Dilatation";
             this.dilatationToolStripMenuItem.Click += new System.EventHandler(this.dilatationToolStripMenuItem_Click);
             // 
             // openingToolStripMenuItem
             // 
             this.openingToolStripMenuItem.Name = "openingToolStripMenuItem";
-            this.openingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openingToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.openingToolStripMenuItem.Text = "Opening";
             this.openingToolStripMenuItem.Click += new System.EventHandler(this.openingToolStripMenuItem_Click);
             // 
             // closingToolStripMenuItem
             // 
             this.closingToolStripMenuItem.Name = "closingToolStripMenuItem";
-            this.closingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closingToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.closingToolStripMenuItem.Text = "Closing";
             this.closingToolStripMenuItem.Click += new System.EventHandler(this.closingToolStripMenuItem_Click);
             // 
             // skeletonizationToolStripMenuItem
             // 
             this.skeletonizationToolStripMenuItem.Name = "skeletonizationToolStripMenuItem";
-            this.skeletonizationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.skeletonizationToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.skeletonizationToolStripMenuItem.Text = "Skeletonization";
             this.skeletonizationToolStripMenuItem.Click += new System.EventHandler(this.skeletonizationToolStripMenuItem_Click);
             // 
             // filterBlobsToolStripMenuItem
             // 
             this.filterBlobsToolStripMenuItem.Name = "filterBlobsToolStripMenuItem";
-            this.filterBlobsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.filterBlobsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.filterBlobsToolStripMenuItem.Text = "Filter Blobs";
             this.filterBlobsToolStripMenuItem.Click += new System.EventHandler(this.filterBlobsToolStripMenuItem_Click);
             // 
@@ -187,7 +189,7 @@
             // analyzeToolStripMenuItem
             // 
             this.analyzeToolStripMenuItem.Name = "analyzeToolStripMenuItem";
-            this.analyzeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.analyzeToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.analyzeToolStripMenuItem.Text = "Analyze shapes";
             this.analyzeToolStripMenuItem.Click += new System.EventHandler(this.analyzeToolStripMenuItem_Click);
             // 
@@ -265,6 +267,7 @@
             // ImageFileDialog
             // 
             this.ImageFileDialog.FileName = "openFileDialog1";
+            this.ImageFileDialog.Title = "Load Image";
             // 
             // panel2
             // 
@@ -280,28 +283,16 @@
             this.panel2.Size = new System.Drawing.Size(912, 23);
             this.panel2.TabIndex = 2;
             // 
-            // sizeLabel
+            // volumeLabel
             // 
-            this.sizeLabel.AutoSize = true;
-            this.sizeLabel.BackColor = System.Drawing.Color.Transparent;
-            this.sizeLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.sizeLabel.Location = new System.Drawing.Point(5, 3);
-            this.sizeLabel.MaximumSize = new System.Drawing.Size(200, 15);
-            this.sizeLabel.MinimumSize = new System.Drawing.Size(100, 15);
-            this.sizeLabel.Name = "sizeLabel";
-            this.sizeLabel.Size = new System.Drawing.Size(100, 15);
-            this.sizeLabel.TabIndex = 0;
-            // 
-            // cordsLabel
-            // 
-            this.cordsLabel.AutoSize = true;
-            this.cordsLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.cordsLabel.Location = new System.Drawing.Point(111, 3);
-            this.cordsLabel.MaximumSize = new System.Drawing.Size(200, 15);
-            this.cordsLabel.MinimumSize = new System.Drawing.Size(100, 15);
-            this.cordsLabel.Name = "cordsLabel";
-            this.cordsLabel.Size = new System.Drawing.Size(100, 15);
-            this.cordsLabel.TabIndex = 1;
+            this.volumeLabel.AutoSize = true;
+            this.volumeLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.volumeLabel.Location = new System.Drawing.Point(323, 3);
+            this.volumeLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.volumeLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.volumeLabel.Name = "volumeLabel";
+            this.volumeLabel.Size = new System.Drawing.Size(100, 15);
+            this.volumeLabel.TabIndex = 3;
             // 
             // grayLabel
             // 
@@ -314,16 +305,28 @@
             this.grayLabel.Size = new System.Drawing.Size(100, 15);
             this.grayLabel.TabIndex = 2;
             // 
-            // volumeLabel
+            // cordsLabel
             // 
-            this.volumeLabel.AutoSize = true;
-            this.volumeLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.volumeLabel.Location = new System.Drawing.Point(323, 3);
-            this.volumeLabel.MaximumSize = new System.Drawing.Size(200, 15);
-            this.volumeLabel.MinimumSize = new System.Drawing.Size(100, 15);
-            this.volumeLabel.Name = "volumeLabel";
-            this.volumeLabel.Size = new System.Drawing.Size(100, 15);
-            this.volumeLabel.TabIndex = 3;
+            this.cordsLabel.AutoSize = true;
+            this.cordsLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.cordsLabel.Location = new System.Drawing.Point(111, 3);
+            this.cordsLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.cordsLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.cordsLabel.Name = "cordsLabel";
+            this.cordsLabel.Size = new System.Drawing.Size(100, 15);
+            this.cordsLabel.TabIndex = 1;
+            // 
+            // sizeLabel
+            // 
+            this.sizeLabel.AutoSize = true;
+            this.sizeLabel.BackColor = System.Drawing.Color.Transparent;
+            this.sizeLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.sizeLabel.Location = new System.Drawing.Point(5, 3);
+            this.sizeLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.sizeLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.sizeLabel.Name = "sizeLabel";
+            this.sizeLabel.Size = new System.Drawing.Size(100, 15);
+            this.sizeLabel.TabIndex = 0;
             // 
             // Form1
             // 

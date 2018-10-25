@@ -71,12 +71,6 @@
     <Compile Include="View\FilterBlobsInputBox.Designer.cs">
       <DependentUpon>FilterBlobsInputBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\ImageStatisticView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\ImageStatisticView.Designer.cs">
-      <DependentUpon>ImageStatisticView.cs</DependentUpon>
-    </Compile>
     <Compile Include="View\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
