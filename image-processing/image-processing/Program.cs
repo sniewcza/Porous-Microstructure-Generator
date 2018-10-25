@@ -12,7 +12,9 @@ namespace image_processing
         [STAThread]
         static void Main()
         {
-           
+            MessageBoxManager.Yes = "Yes";
+            MessageBoxManager.No = "No";
+            MessageBoxManager.Register();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1(new ImageProcessor()));

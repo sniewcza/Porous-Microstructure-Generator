@@ -60,6 +60,7 @@ namespace image_processing.View
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GeneratorProgressBar";
+            this.Text = "Computing..";
             this.ResumeLayout(false);
             this.PerformLayout();
 

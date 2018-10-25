@@ -3,19 +3,19 @@ using System.Drawing;
 namespace image_processing.Utilities
 {
     class Image
-    {
-        private Bitmap _ViewImage;
+    {  
         public event EventHandler OnViewImageChange;
+        private Bitmap _viewImage;
         public Bitmap OriginalImage { get; set; }
         public Bitmap ViewImage
         {
             get
             {
-                return _ViewImage;
+                return _viewImage;
             }
             set
             {
-                _ViewImage = value;
+                _viewImage = value;
                 OnViewImageChange(this, new EventArgs());
             }
         }

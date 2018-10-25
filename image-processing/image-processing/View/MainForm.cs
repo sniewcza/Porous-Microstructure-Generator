@@ -207,8 +207,8 @@ namespace image_processing
         {
             if (_image.OriginalImage != null)
             {
-                var bmp = _image.OriginalImage;
-                _image.ViewImage = bmp;
+                _image.ViewImage = _image.OriginalImage;
+                isBinarized = false;
             }
         }
 
@@ -387,6 +387,12 @@ namespace image_processing
                    progressBar.Increment();
                }
            });
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutView form = new AboutView();
+            form.ShowDialog();
         }
     }
 }

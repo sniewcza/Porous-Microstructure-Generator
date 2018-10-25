@@ -58,6 +58,7 @@ namespace image_processing.View
             // 
             // button2
             // 
+            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button2.Location = new System.Drawing.Point(165, 158);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
@@ -125,7 +126,7 @@ namespace image_processing.View
             this.MinimizeBox = false;
             this.Name = "FilterBlobsInputBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FilterBlobsInputBox";
+            this.Text = "Filter blobs";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

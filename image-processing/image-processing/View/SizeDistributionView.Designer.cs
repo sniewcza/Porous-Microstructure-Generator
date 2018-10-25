@@ -56,7 +56,7 @@
             this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(565, 399);
             this.chart1.TabIndex = 0;
-            this.chart1.Text = "SizeDistribution";           
+            this.chart1.Text = "SizeDistribution";
             // 
             // SizeDistributionView
             // 
@@ -65,7 +65,7 @@
             this.ClientSize = new System.Drawing.Size(565, 399);
             this.Controls.Add(this.chart1);
             this.Name = "SizeDistributionView";
-            this.Text = "SizeDistributionView";
+            this.Text = "Pores area distribution";
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
 
