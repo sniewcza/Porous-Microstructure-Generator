@@ -3,21 +3,39 @@ using System.Windows.Forms;
 
 namespace image_processing.View
 {
+
+
     public partial class GeneratorProgressBar : Form
     {
+        private double _progress;
+       
+
         public GeneratorProgressBar()
         {
             InitializeComponent();
+
         }
 
-        public void Increment()
+        public void Increment(double val)
         {
-            progressBar1.BeginInvoke(new Action(() =>
+            _progress += val;
+            if (_progress >= 1)
             {
-               progressBar1.Increment(1);
-            }));
+                _progress -= 1;
+                progressBar1.BeginInvoke(new Action(() =>
+                {
+                    progressBar1.Increment(1);
+                }));
+            }
         }
 
+        public void setInfo(string info)
+        {
+            if(label1.InvokeRequired)
+            {
+                label1.BeginInvoke(new Action(()=> label1.Text = info));
+            }
+        }
         public void setMaxValue(int val)
         {
             if (this.progressBar1.InvokeRequired)

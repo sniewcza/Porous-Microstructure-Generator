@@ -1,4 +1,5 @@
-﻿using System;
+﻿using image_processing.Model;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,7 +10,7 @@ namespace image_processing.Utilities
 {
     public class MicrostructureGenerator
     {
-        public event EventHandler OnProgress;
+        public event EventHandler<double> OnProgress;
         private Bitmap _bmp;
         private Random _random;
         public MicrostructureGenerator(int width, int height)
@@ -32,36 +33,63 @@ namespace image_processing.Utilities
 
         }
 
-        public Bitmap GenerateMicrostructure(List<PoreData> poresData)
+        public Bitmap GenerateMicrostructure(List<PoreDto> poresData, double volume)
         {
-            var ordered = poresData.OrderByDescending(bm => bm.Blob.Area).GroupBy(bm => bm.ShapeId);
-            foreach (var bm in ordered)
+            //var ordered = poresData.OrderByDescending(bm => bm.Blob.Area).GroupBy(bm => bm.ShapeId);
+            //foreach (var bm in ordered)
+            //{
+            //    GenerateBlobs(poresData.First(e => e.ShapeId == bm.Key), bm.Count());
+            //    OnProgress(this, new EventArgs());
+            //}
+
+            //List<PoreData> clone = new List<PoreData>(poresData);
+            double totalArea = _bmp.Width * _bmp.Height;
+            double poreAreaPercentage;
+            double coveredArea = 0;
+            while (coveredArea < volume)
             {
-                GenerateBlobs(poresData.First(e => e.ShapeId == bm.Key), bm.Count());
-                OnProgress(this, new EventArgs());
+                var validPores = poresData.Where(p => (p.Area / totalArea * 100) < volume-coveredArea).ToArray();
+                PoreDto pore;
+                if (validPores.Length == 0)
+                {
+                    pore = poresData.OrderBy(p => p.Area).First();
+                }
+                else
+                {
+                    var index = _random.Next(0, validPores.Length);
+                    pore = validPores[index];
+                }
+                if (GenerateBlobs(pore, 1))
+                {
+                     poreAreaPercentage = (pore.Area / totalArea * 100);
+                    coveredArea += poreAreaPercentage;
+                    OnProgress(this, poreAreaPercentage);
+                }
             }
 
             return _bmp;
         }
 
-        private void GenerateBlobs(PoreData blobMomentum, int quantity)
+        private bool GenerateBlobs(PoreDto pore, int quantity)
         {
-            
-            var rec = blobMomentum.Blob.Rectangle;
+            pore.PoreImage.RotateFlip((RotateFlipType)_random.Next(0, 8));
+            var bmp = pore.PoreImage;
+            //  var rec = blobMomentum.Blob.Rectangle;
             Rectangle rectangle;
             Point rectangleCenter;
-            for (int i = 0; i < quantity; i++)
+            for (int i = 0; i < 10; i++)
             {
-                do
+                int x = _random.Next((bmp.Width / 2), _bmp.Width - bmp.Width / 2);
+                int y = _random.Next((bmp.Height / 2), _bmp.Height - bmp.Height / 2);
+                rectangleCenter = new Point(x, y);
+                rectangle = new Rectangle(new Point(rectangleCenter.X - bmp.Width / 2, rectangleCenter.Y - bmp.Height / 2), new Size(bmp.Width, bmp.Height));
+                if (CheckRectangleIsClear(rectangle))
                 {
-                    int x = _random.Next((rec.Width / 2), _bmp.Width - rec.Width / 2);
-                    int y = _random.Next((rec.Height / 2), _bmp.Height - rec.Height / 2);
-                    rectangleCenter = new Point(x, y);
-                    rectangle = new Rectangle(new Point(rectangleCenter.X - rec.Width / 2, rectangleCenter.Y - rec.Height / 2), new Size(rec.Width, rec.Height));
-                } while (!CheckRectangleIsClear(rectangle));
-
-                DrawImage(rectangle, blobMomentum.Bmp);
+                    DrawImage(rectangle, pore.PoreImage);
+                    return true;
+                }
             }
+            return false;
         }
 
         private bool CheckRectangleIsClear(Rectangle rec)
@@ -76,8 +104,9 @@ namespace image_processing.Utilities
         private void DrawImage(Rectangle rectangle, Bitmap image)
         {
             using (var g = Graphics.FromImage(_bmp))
-            {            
-                image.RotateFlip((RotateFlipType)_random.Next(0, 8));
+            {
+                // image.RotateFlip((RotateFlipType)_random.Next(0, 8));
+                // g.DrawRectangle(Pens.Red, rectangle);
                 g.DrawImage(image, rectangle.Location);
             }
         }

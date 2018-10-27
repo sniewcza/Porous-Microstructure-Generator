@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace image_processing.Utilities
 {
-
+    [Serializable]
     class CustomComparer : IEqualityComparer<double[]>
     {
         public bool Equals(double[] x, double[] y)
@@ -22,7 +22,7 @@ namespace image_processing.Utilities
             return hash;
         }
     }
-
+    [Serializable]
     public class ShapeAnalyzer
     {
         private Dictionary<double[], Guid> _shapeDictionary;
@@ -35,6 +35,12 @@ namespace image_processing.Utilities
             _classifier = new KNNClassifier(similarityCoefficient, 3);
         }
 
+        public int ShapeGroups {
+            get
+            {
+                return _shapeDictionary.Values.GroupBy(id => id).Count();
+            }
+                }
         public Dictionary<double[], Guid> ShapeDictionary { get => _shapeDictionary; internal set => _shapeDictionary = value; }
 
         public void AddTrainingData(double[] shapeDescriptor, Guid description)

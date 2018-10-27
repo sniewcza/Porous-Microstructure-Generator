@@ -70,6 +70,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\PoreDto.cs" />
+    <Compile Include="Model\PoresKnowledgeBaseDo.cs" />
     <Compile Include="Utilities\IShapeClassifier.cs" />
     <Compile Include="Utilities\KNNClassifier.cs" />
     <Compile Include="Utilities\MessageBoxManager.cs" />
@@ -94,6 +96,12 @@
     </Compile>
     <Compile Include="View\FilterBlobsInputBox.Designer.cs">
       <DependentUpon>FilterBlobsInputBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\GeneratorDataInputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\GeneratorDataInputBox.Designer.cs">
+      <DependentUpon>GeneratorDataInputBox.cs</DependentUpon>
     </Compile>
     <Compile Include="View\MainForm.cs">
       <SubType>Form</SubType>
@@ -138,6 +146,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\FilterBlobsInputBox.resx">
       <DependentUpon>FilterBlobsInputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\GeneratorDataInputBox.resx">
+      <DependentUpon>GeneratorDataInputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MainForm.en.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

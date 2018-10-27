@@ -5,6 +5,7 @@ using System.Drawing;
 
 namespace image_processing.Utilities
 {
+    [Serializable]
     public class PoreData
     {
         private AForge.IntPoint _centerOfgravity;
@@ -22,7 +23,7 @@ namespace image_processing.Utilities
         public double Lp1 { get; set; }
         public double CentralX { get => _centralX;  }
         public double CentralY { get => _centralY;  }
-        public Bitmap Bmp { get => _bmp; }
+        public Bitmap Bmp { get => _bmp; set => Bmp = value; }
        
         private double _area;
         public double M { get; set; }         
@@ -30,6 +31,13 @@ namespace image_processing.Utilities
         public Guid ShapeId { get => _shapeId; set => _shapeId = value; }
         public Blob Blob { get => _blob;}
         private int[,] _bmpData;
+
+        public PoreData(Bitmap poreImage, Guid shapeId, double shapeArea )
+        {
+            Bmp = poreImage;
+            ShapeId = shapeId;
+            Area = shapeArea;
+        }
 
         public PoreData(Blob blob,Bitmap bitmap, List<AForge.IntPoint> edgePoints)
         {

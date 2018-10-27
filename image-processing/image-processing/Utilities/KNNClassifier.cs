@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace image_processing.Utilities
 {
+    [Serializable]
     class KNNClassifier : IShapeClassifier
     {
         private ISimilarity _similarity;
