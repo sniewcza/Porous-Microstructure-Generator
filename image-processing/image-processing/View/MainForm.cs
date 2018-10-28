@@ -21,15 +21,15 @@ namespace image_processing
         ShapeAnalyzer _shapeAnalyzer;
         GlobalSettings globalSettings;
         GeneratorProgressBar progressBar;
-        List<PoreData> _poresData;
-        List<PoreDto> _dto;
+        List<PoreDto> _poresDatabase;
+
         public Form1(IImageProcessor imageProcessor)
         {
             InitializeComponent();
             _processor = imageProcessor;
             _image = new Utilities.Image();
             _image.OnViewImageChange += _image_OnViewImageChange;
-            pictureBox1.MouseClick += PictureBox1_MouseClick;
+            //  pictureBox1.MouseClick += PictureBox1_MouseClick;
             globalSettings = new GlobalSettings();
             _shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
 
@@ -68,15 +68,15 @@ namespace image_processing
             }
         }
 
-        private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            var poreData = _poresData?.FirstOrDefault(data => data.Blob.Rectangle.Contains(e.X, e.Y));
-            if (poreData != null)
-            {
-                BlobView form = new BlobView(_shapeAnalyzer, poreData);
-                form.Show();
-            }
-        }
+        //private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //    var poreData = _poresDatabase?.FirstOrDefault(data => data.Blob.Rectangle.Contains(e.X, e.Y));
+        //    if (poreData != null)
+        //    {
+        //        BlobView form = new BlobView(_shapeAnalyzer, poreData);
+        //        form.Show();
+        //    }
+        //}
 
         private void _image_OnViewImageChange(object sender, EventArgs e)
         {
@@ -99,7 +99,7 @@ namespace image_processing
                     _image.ViewImage = bmp;
 
                     pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-                    EnableMenuBarToolstrips();                  
+                    EnableMenuBarToolstrips();
                     isBinarized = false;
                 }
                 catch (ArgumentException ex)
@@ -148,9 +148,9 @@ namespace image_processing
             if (_image.OriginalImage != null)
             {
                 var form = new ThresholdInputBox(_image.OriginalImage);
-                form.ThresholdChanged += (textbox, args) =>
+                form.ThresholdChanged += (o, threshold) =>
                 {
-                    int threshold = Convert.ToInt32((textbox as MaskedTextBox).Text);
+                   // int threshold = Convert.ToInt32((textbox as MaskedTextBox).Text);
                     form.PictureBox1.Image = _processor.Binarization(_image.OriginalImage, threshold);
                 };
                 if (form.ShowDialog() == DialogResult.OK)
@@ -253,22 +253,22 @@ namespace image_processing
                 DisablePictureBox();
 
                 progressBar.Show();
-                if (_poresData == null)
-                {
-                    _poresData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
-                    progressBar.Info = "Analyzing shapes";
-                    await AnalyzeShapesAsync(_poresData);
-                }
+                //if (_poresData == null)
+                //{
+                //    _poresData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
+                //    progressBar.Info = "Analyzing shapes";
+                //    await AnalyzeShapesAsync(_poresData);
+                //}
 
-                progressBar.Info = "Generating microstructure";
+                //  progressBar.Info = "Generating microstructure";
                 MicrostructureGenerator generator = new MicrostructureGenerator(form.MicrostructureWidth, form.MicrostructureHeight);
                 generator.OnProgress += (s, percentage) =>
                 {
-                   // progressBar.setInfo($"Covered area: {percentage}");
+                    // progressBar.setInfo($"Covered area: {percentage}");
 
-                    progressBar.Increment(percentage*100/form.Volume);
+                    progressBar.Increment(percentage * 100 / form.Volume);
                 };
-                var bmp = await Task.Run(() => generator.GenerateMicrostructure(_dto, form.Volume));
+                var bmp = await Task.Run(() => generator.GenerateMicrostructure(_poresDatabase, form.Volume));
                 // var bmp = generator.GenerateMicrostructure(_poresData, form.Volume);
                 progressBar.Close();
 
@@ -351,14 +351,15 @@ namespace image_processing
                 newData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
 
                 var analyzedShapes = await AnalyzeShapesAsync(newData);
-                if (_poresData == null)
+
+                if (_poresDatabase == null)
                 {
-                    _poresData = analyzedShapes;
+                    _poresDatabase = analyzedShapes;
                 }
                 else
                 {
-                    _poresData.AddRange(analyzedShapes);
-                    _poresData = _poresData.GroupBy(pd => pd.ShapeId).Select(g => g.First()).ToList();
+                    _poresDatabase.AddRange(analyzedShapes);
+                    _poresDatabase = _poresDatabase.GroupBy(pd => pd.Id).Select(g => g.First()).ToList();
                 }
                 progressBar.Close();
 
@@ -382,7 +383,7 @@ namespace image_processing
 
         }
 
-        private Task<List<PoreData>> AnalyzeShapesAsync(List<PoreData> shapes)
+        private Task<List<PoreDto>> AnalyzeShapesAsync(List<PoreData> shapes)
         {
             // shapeAnalyzer = new ShapeAnalyzer(globalSettings.SimilarityCoefficient);
 
@@ -390,7 +391,7 @@ namespace image_processing
            {
                if (globalSettings.NormalizeBlobArea)
                {
-                   var areas = _poresData.Select(item => item.Area);
+                   var areas = shapes.Select(item => item.Area);
                    double max = areas.Max();
                    double min = areas.Min();
                    double range = max - min;
@@ -399,13 +400,23 @@ namespace image_processing
 
                for (int i = 0; i < shapes.Count; i++)
                {
-                   var bm = shapes[i];
-                   var shapeId = _shapeAnalyzer.Analyze(bm.getShapeDescriptor());
-                   bm.ShapeId = shapeId;
+                   var shape = shapes[i];
+                   var shapeId = _shapeAnalyzer.Analyze(shape.getShapeDescriptor());
+                   shape.ShapeId = shapeId;
                    progressBar.Increment(1);
                }
 
-               return shapes;
+               return shapes.GroupBy(s => s.ShapeId)
+                .Select(g =>
+                {
+                    var poredata = g.First();
+                    return new PoreDto()
+                    {
+                        PoreImage = poredata.Bmp,
+                        Id = poredata.ShapeId,
+                        Area = poredata.Area
+                    };
+                }).ToList();
            });
         }
 
@@ -424,12 +435,7 @@ namespace image_processing
                 PoresKnowledgeBaseDo dataObject = new PoresKnowledgeBaseDo()
                 {
                     PoresDictionary = _shapeAnalyzer.ShapeDictionary,
-                    PoresData = _poresData.Select(pd => new PoreDto()
-                    {
-                        PoreImage = pd.Bmp,
-                        Area = pd.Area,
-                        Id = pd.ShapeId
-                    }).ToList()
+                    PoresData = _poresDatabase
                 };
 
 
@@ -447,6 +453,7 @@ namespace image_processing
             }
         }
 
+
         private void importShapesKnowledgeBaseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -461,7 +468,7 @@ namespace image_processing
                     stream.Close();
 
                     _shapeAnalyzer.ShapeDictionary = shapes.PoresDictionary;
-                    _dto = shapes.PoresData;
+                    _poresDatabase = shapes.PoresData;
                 }
                 catch (Exception ex)
                 {

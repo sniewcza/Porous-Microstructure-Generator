@@ -1,5 +1,6 @@
-﻿using System.Windows.Forms;
-
+﻿using System.Drawing;
+using System.Windows.Forms;
+using AForge.Controls;
 namespace image_processing.View
 {
     partial class ThresholdInputBox
@@ -30,6 +31,7 @@ namespace image_processing.View
         /// </summary>
         private void InitializeComponent()
         {
+            this.slider = new AForge.Controls.ColorSlider();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -42,6 +44,15 @@ namespace image_processing.View
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // slider
+            // 
+            this.slider.DoubleArrow = false;
+            this.slider.Location = new System.Drawing.Point(12, 65);
+            this.slider.Name = "slider";
+            this.slider.Size = new System.Drawing.Size(273, 20);
+            this.slider.TabIndex = 6;
+            this.slider.Type = AForge.Controls.ColorSlider.ColorSliderType.Threshold;
+            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -51,7 +62,7 @@ namespace image_processing.View
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Location = new System.Drawing.Point(6, 19);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(511, 321);
+            this.panel1.Size = new System.Drawing.Size(406, 321);
             this.panel1.TabIndex = 1;
             // 
             // pictureBox1
@@ -78,7 +89,7 @@ namespace image_processing.View
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(105, 335);
+            this.button2.Location = new System.Drawing.Point(196, 335);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 3;
@@ -100,9 +111,9 @@ namespace image_processing.View
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 36);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 26);
+            this.label1.Size = new System.Drawing.Size(86, 26);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Threshold value\r\n      [0-128]\r\n";
+            this.label1.Text = "Threshold value:\r\n\r\n";
             // 
             // groupBox1
             // 
@@ -110,9 +121,9 @@ namespace image_processing.View
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.panel1);
-            this.groupBox1.Location = new System.Drawing.Point(186, 12);
+            this.groupBox1.Location = new System.Drawing.Point(291, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(523, 346);
+            this.groupBox1.Size = new System.Drawing.Size(418, 346);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Preview";
@@ -129,6 +140,7 @@ namespace image_processing.View
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.maskedTextBox1);
+            this.Controls.Add(this.slider);
             this.Name = "ThresholdInputBox";
             this.Text = "Binarization";
             this.panel1.ResumeLayout(false);
@@ -148,7 +160,7 @@ namespace image_processing.View
         private MaskedTextBox maskedTextBox1;
         private Label label1;
         private GroupBox groupBox1;
-
-        public PictureBox PictureBox1 { get => pictureBox1; set => pictureBox1 = value; }
+        private ColorSlider slider;
+        public System.Windows.Forms.PictureBox PictureBox1 { get => pictureBox1; set => pictureBox1 = value; }
     }
 }

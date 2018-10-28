@@ -22,7 +22,7 @@ namespace image_processing.View
             if (_progress >= 1)
             {
                 _progress -= 1;
-                progressBar1.BeginInvoke(new Action(() =>
+                progressBar1.Invoke(new Action(() =>
                 {
                     progressBar1.Increment(1);
                 }));

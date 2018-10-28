@@ -43,12 +43,13 @@ namespace image_processing.Utilities
             //}
 
             //List<PoreData> clone = new List<PoreData>(poresData);
+            var validPores = poresData.Where(p => p.PoreImage.Width < _bmp.Width && p.PoreImage.Height < _bmp.Height).ToArray();
             double totalArea = _bmp.Width * _bmp.Height;
             double poreAreaPercentage;
             double coveredArea = 0;
             while (coveredArea < volume)
             {
-                var validPores = poresData.Where(p => (p.Area / totalArea * 100) < volume-coveredArea).ToArray();
+                 validPores = validPores.Where(p => (p.Area / totalArea * 100) < volume - coveredArea).ToArray();
                 PoreDto pore;
                 if (validPores.Length == 0)
                 {
@@ -61,7 +62,7 @@ namespace image_processing.Utilities
                 }
                 if (GenerateBlobs(pore, 1))
                 {
-                     poreAreaPercentage = (pore.Area / totalArea * 100);
+                    poreAreaPercentage = (pore.Area / totalArea * 100);
                     coveredArea += poreAreaPercentage;
                     OnProgress(this, poreAreaPercentage);
                 }
