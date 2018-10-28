@@ -109,6 +109,12 @@
     <Compile Include="View\GeneratorDataInputBox.Designer.cs">
       <DependentUpon>GeneratorDataInputBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\ImageHistogramView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ImageHistogramView.Designer.cs">
+      <DependentUpon>ImageHistogramView.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -155,6 +161,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\GeneratorDataInputBox.resx">
       <DependentUpon>GeneratorDataInputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ImageHistogramView.resx">
+      <DependentUpon>ImageHistogramView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\MainForm.en.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

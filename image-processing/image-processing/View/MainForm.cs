@@ -478,5 +478,11 @@ namespace image_processing
                 MessageBox.Show("Shape Database loaded", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        private void imageHistogramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageHistogramView form = new ImageHistogramView(_image.ViewImage);
+            form.Show();
+        }
     }
 }
