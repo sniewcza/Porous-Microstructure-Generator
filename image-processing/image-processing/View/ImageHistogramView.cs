@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System;
 using System.Runtime.InteropServices;
 using System.Linq;
-namespace image_processing.View
+namespace Generator.View
 {
     public partial class ImageHistogramView : Form
     {

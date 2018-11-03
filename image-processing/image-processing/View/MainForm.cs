@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using image_processing.Utilities;
-using image_processing.View;
+using Generator.Utilities;
+using Generator.View;
 using System.Linq;
 using System.Threading.Tasks;
-using image_processing.Model;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
-using System.Threading;
+using Generator.Model;
 
-namespace image_processing
+namespace Generator
 {
     public partial class Form1 : Form
     {
-        Utilities.Image _image;
+        Model.Image _image;
         bool isBinarized;
         IImageProcessor _processor;
         ShapeAnalyzer _shapeAnalyzer;
@@ -28,7 +27,7 @@ namespace image_processing
         {
             InitializeComponent();
             _processor = imageProcessor;
-            _image = new Utilities.Image();
+            _image = new Model.Image();
             _image.OnViewImageChange += _image_OnViewImageChange;
             //  pictureBox1.MouseClick += PictureBox1_MouseClick;
             globalSettings = new GlobalSettings();
@@ -351,13 +350,11 @@ namespace image_processing
         private async void analyzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (isBinarized)
-            {
-                CancellationTokenSource cancellationToken = new CancellationTokenSource();
+            {                
                 
                 progressBar = new GeneratorProgressBar
                 {
-                    Info = "Looking for shapes",
-                    cancellationToken = cancellationToken
+                    Info = "Looking for shapes",                   
                 };
 
 
@@ -366,13 +363,13 @@ namespace image_processing
 
                 progressBar.Show();
 
-                List<PoreData> newData;
+                List<PoreAnalyzeData> newData;
 
                 newData = await Task.Run(() => _processor.FindShapes(_image.ViewImage));
 
                 progressBar.Info = "Analyzing shapes";
 
-                var analyzedShapes = await AnalyzeShapesAsync(newData,cancellationToken);
+                var analyzedShapes = await AnalyzeShapesAsync(newData);
 
                 if (_poresDatabase == null)
                 {
@@ -413,7 +410,7 @@ namespace image_processing
 
         }
 
-        private Task<List<PoreDto>> AnalyzeShapesAsync(List<PoreData> shapes,CancellationTokenSource cancellationToken)
+        private Task<List<PoreDto>> AnalyzeShapesAsync(List<PoreAnalyzeData> shapes)
         {           
             return Task.Run(() =>
            {
@@ -437,7 +434,7 @@ namespace image_processing
                         Area = poredata.Area
                     };
                 }).ToList();
-           },cancellationToken.Token);
+           });
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

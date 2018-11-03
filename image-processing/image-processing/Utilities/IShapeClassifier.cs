@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace image_processing.Utilities
+namespace Generator.Utilities
 {
     interface IShapeClassifier
     {

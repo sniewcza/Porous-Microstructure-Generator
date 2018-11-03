@@ -1,4 +1,4 @@
-﻿namespace image_processing
+﻿namespace Generator
 {
     partial class Form1
     {

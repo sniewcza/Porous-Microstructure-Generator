@@ -56,9 +56,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\image-processing\image-processing.csproj">
+    <ProjectReference Include="..\image-processing\PorousMicrostructureGenerator.csproj">
       <Project>{fec9e829-de91-4e1a-805d-46a9c45f6305}</Project>
-      <Name>image-processing</Name>
+      <Name>PorousMicrostructureGenerator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AForge.Controls;
-namespace image_processing.View
+namespace Generator.View
 {
     public partial class ThresholdInputBox : Form
     {

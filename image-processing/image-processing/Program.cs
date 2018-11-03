@@ -1,8 +1,8 @@
-﻿using image_processing.Utilities;
+﻿using Generator.Utilities;
 using System;
 using System.Windows.Forms;
 
-namespace image_processing
+namespace Generator
 {
     static class Program
     {

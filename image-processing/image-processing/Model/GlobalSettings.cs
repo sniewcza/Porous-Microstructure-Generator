@@ -1,4 +1,4 @@
-﻿namespace image_processing.Utilities
+﻿namespace Generator.Model
 {
     public class GlobalSettings
     {

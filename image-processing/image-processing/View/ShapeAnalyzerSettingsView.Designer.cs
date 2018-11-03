@@ -1,4 +1,4 @@
-﻿namespace image_processing.View
+﻿namespace Generator.View
 {
     partial class ShapeAnalyzerSettingsView
     {

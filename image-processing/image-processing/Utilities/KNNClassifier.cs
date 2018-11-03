@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace image_processing.Utilities
+namespace Generator.Utilities
 {
     [Serializable]
     class KNNClassifier : IShapeClassifier

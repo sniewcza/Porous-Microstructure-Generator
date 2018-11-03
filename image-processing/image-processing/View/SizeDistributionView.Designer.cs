@@ -1,5 +1,5 @@
 ﻿using AForge.Controls;
-namespace image_processing.View
+namespace Generator.View
 {
     partial class SizeDistributionView
     {

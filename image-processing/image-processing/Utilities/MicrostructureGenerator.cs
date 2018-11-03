@@ -1,18 +1,19 @@
-﻿using image_processing.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Generator.Model;
 
-namespace image_processing.Utilities
+namespace Generator.Utilities
 {
     public class MicrostructureGenerator
     {
         public event EventHandler<double> OnProgress;
         private Bitmap _bmp;
         private Random _random;
+        private int _numberOfTrials = 5;
         public MicrostructureGenerator(int width, int height)
         {
             _bmp = CreateWhiteBmp(width, height);
@@ -35,21 +36,15 @@ namespace image_processing.Utilities
 
         public Bitmap GenerateMicrostructure(List<PoreDto> poresData, double volume)
         {
-            //var ordered = poresData.OrderByDescending(bm => bm.Blob.Area).GroupBy(bm => bm.ShapeId);
-            //foreach (var bm in ordered)
-            //{
-            //    GenerateBlobs(poresData.First(e => e.ShapeId == bm.Key), bm.Count());
-            //    OnProgress(this, new EventArgs());
-            //}
 
-            //List<PoreData> clone = new List<PoreData>(poresData);
             var validPores = poresData.Where(p => p.PoreImage.Width < _bmp.Width && p.PoreImage.Height < _bmp.Height).ToList();
             double totalArea = _bmp.Width * _bmp.Height;
             double poreAreaPercentage;
             double coveredArea = 0;
+
             while (coveredArea < volume)
             {
-                 validPores = validPores.Where(p => (p.Area / totalArea * 100) < volume - coveredArea).ToList();
+                validPores = validPores.Where(p => (p.Area / totalArea * 100) < volume - coveredArea).ToList();
                 PoreDto pore;
                 if (validPores.Count == 0)
                 {
@@ -60,10 +55,10 @@ namespace image_processing.Utilities
                     var index = _random.Next(0, validPores.Count);
                     pore = validPores[index];
                 }
-                if (GenerateBlobs(pore, 1))
+                if (GenerateBlobs(pore, _numberOfTrials))
                 {
                     poreAreaPercentage = (pore.Area / totalArea * 100);
-                    coveredArea += poreAreaPercentage;                   
+                    coveredArea += poreAreaPercentage;
                     OnProgress(this, poreAreaPercentage);
                 }
             }
@@ -71,19 +66,18 @@ namespace image_processing.Utilities
             return _bmp;
         }
 
-        private bool GenerateBlobs(PoreDto pore, int quantity)
+        private bool GenerateBlobs(PoreDto pore, int numberOfTrials)
         {
             pore.PoreImage.RotateFlip((RotateFlipType)_random.Next(0, 8));
-            var bmp = pore.PoreImage;
-            //  var rec = blobMomentum.Blob.Rectangle;
+            var poreImage = pore.PoreImage;
             Rectangle rectangle;
             Point rectangleCenter;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < numberOfTrials; i++)
             {
-                int x = _random.Next((bmp.Width / 2), _bmp.Width - bmp.Width / 2);
-                int y = _random.Next((bmp.Height / 2), _bmp.Height - bmp.Height / 2);
+                int x = _random.Next((poreImage.Width / 2), _bmp.Width - poreImage.Width / 2);
+                int y = _random.Next((poreImage.Height / 2), _bmp.Height - poreImage.Height / 2);
                 rectangleCenter = new Point(x, y);
-                rectangle = new Rectangle(new Point(rectangleCenter.X - bmp.Width / 2, rectangleCenter.Y - bmp.Height / 2), new Size(bmp.Width, bmp.Height));
+                rectangle = new Rectangle(new Point(rectangleCenter.X - poreImage.Width / 2, rectangleCenter.Y - poreImage.Height / 2), new Size(poreImage.Width, poreImage.Height));
                 if (CheckRectangleIsClear(rectangle))
                 {
                     DrawImage(rectangle, pore.PoreImage);
@@ -105,9 +99,7 @@ namespace image_processing.Utilities
         private void DrawImage(Rectangle rectangle, Bitmap image)
         {
             using (var g = Graphics.FromImage(_bmp))
-            {
-                // image.RotateFlip((RotateFlipType)_random.Next(0, 8));
-                // g.DrawRectangle(Pens.Red, rectangle);
+            {              
                 g.DrawImage(image, rectangle.Location);
             }
         }

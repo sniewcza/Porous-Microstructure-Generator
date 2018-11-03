@@ -1,9 +1,10 @@
-﻿using image_processing.Utilities;
+﻿using Generator.Utilities;
 using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Generator.Model;
 
-namespace image_processing.View
+namespace Generator.View
 {
     public partial class ShapeAnalyzerSettingsView : Form
     {

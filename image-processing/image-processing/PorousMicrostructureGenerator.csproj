@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -81,7 +81,7 @@
     <Compile Include="Utilities\IShapeClassifier.cs" />
     <Compile Include="Utilities\KNNClassifier.cs" />
     <Compile Include="Utilities\MessageBoxManager.cs" />
-    <Compile Include="Model\PoreData.cs" />
+    <Compile Include="Model\PoreAnalyzeData.cs" />
     <Compile Include="Model\GlobalSettings.cs" />
     <Compile Include="Utilities\MicrostructureGenerator.cs" />
     <Compile Include="Utilities\ShapeAnalyzer.cs" />

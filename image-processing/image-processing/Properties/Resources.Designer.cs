@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace image_processing.Properties
+namespace Generator.Properties
 {
 
 

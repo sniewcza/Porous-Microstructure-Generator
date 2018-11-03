@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace image_processing.Utilities
+namespace Generator.Utilities
 {
     [Serializable]
     class CustomComparer : IEqualityComparer<double[]>
@@ -22,12 +22,12 @@ namespace image_processing.Utilities
             return hash;
         }
     }
+
     [Serializable]
     public class ShapeAnalyzer
     {
         public event EventHandler<int> ShapeCountChange;
-        private Dictionary<double[], Guid> _shapeDictionary;
-        // private readonly double _similarityCoefficient;
+        private Dictionary<double[], Guid> _shapeDictionary;      
         private IShapeClassifier _classifier;
 
         public ShapeAnalyzer(double similarityCoefficient)
@@ -53,10 +53,6 @@ namespace image_processing.Utilities
             }
         }
 
-        public void AddTrainingData(double[] shapeDescriptor, Guid description)
-        {
-            _shapeDictionary.Add(shapeDescriptor, description);
-        }
         public Guid Analyze(double[] shapeDescriptor)
         {
             if (shapeDescriptor.Length != 6)

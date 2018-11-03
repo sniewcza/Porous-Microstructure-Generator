@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 
-namespace image_processing.View
+namespace Generator.View
 {
 
 

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Generator.Model;
 
-namespace image_processing.Utilities
+namespace Generator.Utilities
 {
-    public  interface IImageProcessor
+    public interface IImageProcessor
     {
         event EventHandler<int> OnStart;
         event EventHandler OnProgress;
@@ -16,7 +17,7 @@ namespace image_processing.Utilities
         Bitmap Closing(Bitmap bitmap);
         Bitmap Skeletonization(Bitmap bitmap);
         Bitmap ReverseBitmapColors(Bitmap bitmap);
-        List<PoreData> FindShapes(Bitmap bitmap);      
+        List<PoreAnalyzeData> FindShapes(Bitmap bitmap);
         double GetPoresVolume(Bitmap bitmap);
         List<int> BlobsArea(Bitmap bitmap);
         Bitmap ConvertToGrayscale(Bitmap original);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
-namespace image_processing.Utilities
+
+namespace Generator.Model
 {
     class Image
     {  
