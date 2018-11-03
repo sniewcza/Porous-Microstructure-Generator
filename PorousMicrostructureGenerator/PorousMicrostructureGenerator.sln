@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PorousMicrostructureGenerator", "image-processing\PorousMicrostructureGenerator.csproj", "{FEC9E829-DE91-4E1A-805D-46A9C45F6305}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PorousMicrostructureGenerator", "PorousMicrostructureGenerator\PorousMicrostructureGenerator.csproj", "{FEC9E829-DE91-4E1A-805D-46A9C45F6305}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessingTests", "ImageProcessingTests\ImageProcessingTests.csproj", "{7950FC1C-37C1-462A-BDA3-FC26139E16F9}"
 EndProject

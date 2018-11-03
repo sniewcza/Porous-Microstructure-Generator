@@ -56,7 +56,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\image-processing\PorousMicrostructureGenerator.csproj">
+    <ProjectReference Include="..\PorousMicrostructureGenerator\PorousMicrostructureGenerator.csproj">
       <Project>{fec9e829-de91-4e1a-805d-46a9c45f6305}</Project>
       <Name>PorousMicrostructureGenerator</Name>
     </ProjectReference>
