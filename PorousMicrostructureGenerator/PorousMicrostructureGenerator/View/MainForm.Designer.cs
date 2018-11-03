@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,6 +44,7 @@
             this.filterBlobsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.shapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.analyzeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearShapeDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importShapesKnowledgeBaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportShapesKnowledgeBaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,12 +60,11 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ImageFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.shapeCountLabel = new System.Windows.Forms.Label();
             this.volumeLabel = new System.Windows.Forms.Label();
             this.grayLabel = new System.Windows.Forms.Label();
             this.cordsLabel = new System.Windows.Forms.Label();
             this.sizeLabel = new System.Windows.Forms.Label();
-            this.shapeCountLabel = new System.Windows.Forms.Label();
-            this.clearShapeDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -101,7 +102,7 @@
             // OpenToolStripMenuItem
             // 
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.OpenToolStripMenuItem.Text = "Open";
             this.OpenToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
             // 
@@ -109,7 +110,7 @@
             // 
             this.reloadToolStripMenuItem.Enabled = false;
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.reloadToolStripMenuItem.Text = "Reload";
             this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
             // 
@@ -117,7 +118,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -203,6 +204,13 @@
             this.analyzeToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.analyzeToolStripMenuItem.Text = "Analyze current image";
             this.analyzeToolStripMenuItem.Click += new System.EventHandler(this.analyzeToolStripMenuItem_Click);
+            // 
+            // clearShapeDatabaseToolStripMenuItem
+            // 
+            this.clearShapeDatabaseToolStripMenuItem.Name = "clearShapeDatabaseToolStripMenuItem";
+            this.clearShapeDatabaseToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.clearShapeDatabaseToolStripMenuItem.Text = "Clear shape database";
+            this.clearShapeDatabaseToolStripMenuItem.Click += new System.EventHandler(this.clearShapeDatabaseToolStripMenuItem_Click);
             // 
             // importShapesKnowledgeBaseToolStripMenuItem
             // 
@@ -331,6 +339,17 @@
             this.panel2.Size = new System.Drawing.Size(912, 23);
             this.panel2.TabIndex = 2;
             // 
+            // shapeCountLabel
+            // 
+            this.shapeCountLabel.AutoSize = true;
+            this.shapeCountLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.shapeCountLabel.Location = new System.Drawing.Point(438, 2);
+            this.shapeCountLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.shapeCountLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.shapeCountLabel.Name = "shapeCountLabel";
+            this.shapeCountLabel.Size = new System.Drawing.Size(100, 15);
+            this.shapeCountLabel.TabIndex = 4;
+            // 
             // volumeLabel
             // 
             this.volumeLabel.AutoSize = true;
@@ -376,24 +395,6 @@
             this.sizeLabel.Size = new System.Drawing.Size(100, 15);
             this.sizeLabel.TabIndex = 0;
             // 
-            // shapeCountLabel
-            // 
-            this.shapeCountLabel.AutoSize = true;
-            this.shapeCountLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.shapeCountLabel.Location = new System.Drawing.Point(438, 2);
-            this.shapeCountLabel.MaximumSize = new System.Drawing.Size(200, 15);
-            this.shapeCountLabel.MinimumSize = new System.Drawing.Size(100, 15);
-            this.shapeCountLabel.Name = "shapeCountLabel";
-            this.shapeCountLabel.Size = new System.Drawing.Size(100, 15);
-            this.shapeCountLabel.TabIndex = 4;
-            // 
-            // clearShapeDatabaseToolStripMenuItem
-            // 
-            this.clearShapeDatabaseToolStripMenuItem.Name = "clearShapeDatabaseToolStripMenuItem";
-            this.clearShapeDatabaseToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.clearShapeDatabaseToolStripMenuItem.Text = "Clear shape database";
-            this.clearShapeDatabaseToolStripMenuItem.Click += new System.EventHandler(this.clearShapeDatabaseToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -402,6 +403,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Porous Microstructure Generator";
