@@ -13,9 +13,7 @@ namespace image_processing.View
         {
             InitializeComponent();
             this.textBox1.TextChanged += TextBox1_TextChanged;
-            _prevText = this.textBox1.Text = settings.SimilarityCoefficient.ToString();
-            this.checkBox1.Checked = settings.NormalizeBlobArea;
-
+            _prevText = this.textBox1.Text = settings.SimilarityCoefficient.ToString();          
         }
 
         public double SimilarityCoefficient
@@ -25,14 +23,7 @@ namespace image_processing.View
                 return Convert.ToDouble(this.textBox1.Text.Replace('.',','));
             }
         }
-
-        public bool NormalizePoreArea
-        {
-            get
-            {
-                return this.checkBox1.Checked;
-            }
-        }
+       
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
             if (this.textBox1.Text != string.Empty)

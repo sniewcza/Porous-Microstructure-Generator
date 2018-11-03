@@ -49,6 +49,7 @@
             this.importShapeAnalyzerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statisticToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sizeDistributionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,7 +62,8 @@
             this.grayLabel = new System.Windows.Forms.Label();
             this.cordsLabel = new System.Windows.Forms.Label();
             this.sizeLabel = new System.Windows.Forms.Label();
-            this.imageHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shapeCountLabel = new System.Windows.Forms.Label();
+            this.clearShapeDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -99,7 +101,7 @@
             // OpenToolStripMenuItem
             // 
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.OpenToolStripMenuItem.Text = "Open";
             this.OpenToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
             // 
@@ -107,7 +109,7 @@
             // 
             this.reloadToolStripMenuItem.Enabled = false;
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.reloadToolStripMenuItem.Text = "Reload";
             this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
             // 
@@ -115,7 +117,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -187,6 +189,7 @@
             // 
             this.shapeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.analyzeToolStripMenuItem,
+            this.clearShapeDatabaseToolStripMenuItem,
             this.importShapesKnowledgeBaseToolStripMenuItem,
             this.exportShapesKnowledgeBaseToolStripMenuItem});
             this.shapeToolStripMenuItem.Name = "shapeToolStripMenuItem";
@@ -195,9 +198,10 @@
             // 
             // analyzeToolStripMenuItem
             // 
+            this.analyzeToolStripMenuItem.Enabled = false;
             this.analyzeToolStripMenuItem.Name = "analyzeToolStripMenuItem";
             this.analyzeToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.analyzeToolStripMenuItem.Text = "Analyze shapes";
+            this.analyzeToolStripMenuItem.Text = "Analyze current image";
             this.analyzeToolStripMenuItem.Click += new System.EventHandler(this.analyzeToolStripMenuItem_Click);
             // 
             // importShapesKnowledgeBaseToolStripMenuItem
@@ -234,7 +238,6 @@
             this.statisticToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sizeDistributionToolStripMenuItem,
             this.imageHistogramToolStripMenuItem});
-            this.statisticToolStripMenuItem.Enabled = false;
             this.statisticToolStripMenuItem.Name = "statisticToolStripMenuItem";
             this.statisticToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.statisticToolStripMenuItem.Text = "Statistic";
@@ -245,6 +248,13 @@
             this.sizeDistributionToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.sizeDistributionToolStripMenuItem.Text = "Size Distribution";
             this.sizeDistributionToolStripMenuItem.Click += new System.EventHandler(this.sizeDistributionToolStripMenuItem_Click);
+            // 
+            // imageHistogramToolStripMenuItem
+            // 
+            this.imageHistogramToolStripMenuItem.Name = "imageHistogramToolStripMenuItem";
+            this.imageHistogramToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.imageHistogramToolStripMenuItem.Text = "Image Histogram";
+            this.imageHistogramToolStripMenuItem.Click += new System.EventHandler(this.imageHistogramToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -310,6 +320,7 @@
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.shapeCountLabel);
             this.panel2.Controls.Add(this.volumeLabel);
             this.panel2.Controls.Add(this.grayLabel);
             this.panel2.Controls.Add(this.cordsLabel);
@@ -365,12 +376,23 @@
             this.sizeLabel.Size = new System.Drawing.Size(100, 15);
             this.sizeLabel.TabIndex = 0;
             // 
-            // imageHistogramToolStripMenuItem
+            // shapeCountLabel
             // 
-            this.imageHistogramToolStripMenuItem.Name = "imageHistogramToolStripMenuItem";
-            this.imageHistogramToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.imageHistogramToolStripMenuItem.Text = "Image Histogram";
-            this.imageHistogramToolStripMenuItem.Click += new System.EventHandler(this.imageHistogramToolStripMenuItem_Click);
+            this.shapeCountLabel.AutoSize = true;
+            this.shapeCountLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.shapeCountLabel.Location = new System.Drawing.Point(438, 2);
+            this.shapeCountLabel.MaximumSize = new System.Drawing.Size(200, 15);
+            this.shapeCountLabel.MinimumSize = new System.Drawing.Size(100, 15);
+            this.shapeCountLabel.Name = "shapeCountLabel";
+            this.shapeCountLabel.Size = new System.Drawing.Size(100, 15);
+            this.shapeCountLabel.TabIndex = 4;
+            // 
+            // clearShapeDatabaseToolStripMenuItem
+            // 
+            this.clearShapeDatabaseToolStripMenuItem.Name = "clearShapeDatabaseToolStripMenuItem";
+            this.clearShapeDatabaseToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.clearShapeDatabaseToolStripMenuItem.Text = "Clear shape database";
+            this.clearShapeDatabaseToolStripMenuItem.Click += new System.EventHandler(this.clearShapeDatabaseToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -432,6 +454,8 @@
         private System.Windows.Forms.ToolStripMenuItem importShapesKnowledgeBaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportShapesKnowledgeBaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageHistogramToolStripMenuItem;
+        private System.Windows.Forms.Label shapeCountLabel;
+        private System.Windows.Forms.ToolStripMenuItem clearShapeDatabaseToolStripMenuItem;
     }
 }
 

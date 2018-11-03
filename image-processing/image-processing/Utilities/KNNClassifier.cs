@@ -43,11 +43,13 @@ namespace image_processing.Utilities
 
             foreach (double[] val in trainingSet.Keys)
             {
+              
                 double distance = _similarity.GetSimilarityScore(input, val);
                 similarities.Add(val, distance);
             }
             return similarities;
         }
+     
     }
 }
 

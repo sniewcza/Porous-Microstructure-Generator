@@ -9,53 +9,51 @@ namespace image_processing.View
     public partial class SizeDistributionView : Form
     {
 
-        List<string> labels = new List<string>();
-        private List<int> _blobSizes;
-
+        private int _minPoreArea;
+        private int _maxPoreArea;
+        private IGrouping<int, int>[] grouping;
         public SizeDistributionView(List<int> sizes)
         {
             InitializeComponent();
-            _blobSizes = sizes;
-            chart1.Customize += Chart1_Customize;
-            GenerateChartData();
-
+            grouping = InitializeHistogramData(sizes);
+            this.histogram.Values = grouping.Select(g => g.Count()).ToArray();
+            this.histogram.Width = this.histogram.Values.Length+10;
+            this.histogram.PositionChanged += Histogram_PositionChanged;
+            this.label1.Text = $"Min area: {_minPoreArea}";
+            this.label2.Text = $"Max area: {_maxPoreArea}";
+            this.histogram.Refresh();
         }
 
-        private void GenerateChartData()
+        private void Histogram_PositionChanged(object sender, AForge.Controls.HistogramEventArgs e)
         {
-            //Ranges
-            List<int> ranges = new List<int>();
-            int range = 100;
-            while (range < _blobSizes.Last())
+            if (e.Position >= 0 && e.Position < histogram.Values.Length)
             {
-                ranges.Add(range);
-                range += 100;
+                label3.Text = $"Area: {grouping[e.Position].Key}";
+                label4.Text = $"Count: {histogram.Values[e.Position]}";
             }
-            //GroupData
-            var seriesData = _blobSizes.GroupBy(x => ranges.FirstOrDefault(r => r >= x))
-                        .Select(g => new { Value = g.Key, Count = g.Count() })
-                        .OrderByDescending(x => x.Value).Where(x => x.Value != 0).Reverse();
-            //Labels
-            labels.Add("1\n100");
-            for (int i = 0; i < seriesData.Count() - 1; i++)
+            else
             {
-                labels.Add($"{seriesData.ElementAt(i).Value + 1}\n{seriesData.ElementAt(i + 1).Value}");
-            }
-            //Series
-            foreach (var p in seriesData)
-            {
-                chart1.Series["Series1"].Points.AddXY(p.Value, p.Count);
+                label3.Text = "Area:";
+                label4.Text = "Count";
             }
         }
 
-        private void Chart1_Customize(object sender, EventArgs e)
+        private IGrouping<int, int>[] InitializeHistogramData(List<int> sizes)
         {
-            int index = 0;
-            foreach (var p in chart1.Series["Series1"].Points)
-            {
-                p.AxisLabel = labels[index];
-                index++;
-            }
+            var groups = sizes.GroupBy(s => s);
+
+            _minPoreArea = groups.Min(g => g.Key);
+            _maxPoreArea = groups.Max(g => g.Key);
+
+            //  List<int> histogramData = new List<int>
+            // int[] histogramValues = new int[_maxPoreArea+1];
+
+            //foreach (var group in groups)
+            //{
+            //    histogramValues[group.Key] = group.Count();
+            //}
+
+            return groups.OrderBy(g => g.Key).ToArray(); ;
         }
 
 

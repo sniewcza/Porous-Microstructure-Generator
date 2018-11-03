@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace image_processing.View
@@ -8,12 +9,11 @@ namespace image_processing.View
     public partial class GeneratorProgressBar : Form
     {
         private double _progress;
-       
+        public CancellationTokenSource cancellationToken;
 
         public GeneratorProgressBar()
         {
             InitializeComponent();
-
         }
 
         public void Increment(double val)
@@ -31,9 +31,9 @@ namespace image_processing.View
 
         public void setInfo(string info)
         {
-            if(label1.InvokeRequired)
+            if (label1.InvokeRequired)
             {
-                label1.BeginInvoke(new Action(()=> label1.Text = info));
+                label1.BeginInvoke(new Action(() => label1.Text = info));
             }
         }
         public void setMaxValue(int val)
@@ -44,6 +44,14 @@ namespace image_processing.View
                 {
                     progressBar1.Maximum = val;
                 }));
+            }
+        }
+
+        private void GeneratorProgressBar_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
             }
         }
     }

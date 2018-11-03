@@ -62,6 +62,7 @@ namespace image_processing.View
             this.MinimizeBox = false;
             this.Name = "GeneratorProgressBar";
             this.Text = "Computing..";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GeneratorProgressBar_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

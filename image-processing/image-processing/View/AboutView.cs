@@ -9,12 +9,12 @@ namespace image_processing.View
         public AboutView()
         {
             InitializeComponent();
-            this.Text = String.Format("About {0}", AssemblyTitle);
-            this.labelProductName.Text = AssemblyProduct;
+            this.Text = String.Format("About {0}", "PMG");
+            this.labelProductName.Text = "Porous Microstructure Generator";
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelCopyright.Text = AssemblyCopyright;
-            this.labelCompanyName.Text = AssemblyCompany;
-            this.textBoxDescription.Text = AssemblyDescription;
+            this.labelCompanyName.Text = "Creator: Szymon Niewczas";
+            this.textBoxDescription.Text = DescriptionText();
         }
 
         #region Assembly Attribute Accessors
@@ -96,5 +96,13 @@ namespace image_processing.View
             }
         }
         #endregion
+
+
+        public string DescriptionText()
+        {
+            return
+                "Porous Microstructure Generator is image analysis program written in C#, dedicated for porous microstructures. \n" +
+                "It includes different filters and tools available in Aforge.NET framework to analyze images";
+        }
     }
 }

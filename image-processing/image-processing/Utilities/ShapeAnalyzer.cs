@@ -25,23 +25,33 @@ namespace image_processing.Utilities
     [Serializable]
     public class ShapeAnalyzer
     {
+        public event EventHandler<int> ShapeCountChange;
         private Dictionary<double[], Guid> _shapeDictionary;
-        private readonly double _similarityCoefficient;
+        // private readonly double _similarityCoefficient;
         private IShapeClassifier _classifier;
+
         public ShapeAnalyzer(double similarityCoefficient)
         {
             _shapeDictionary = new Dictionary<double[], Guid>(new CustomComparer());
-            _similarityCoefficient = similarityCoefficient;
+            _classifier = new KNNClassifier(similarityCoefficient, 3);
+
+        }
+
+        public ShapeAnalyzer(ShapeAnalyzer shapeAnalyzer, double similarityCoefficient)
+        {
+            this._shapeDictionary = shapeAnalyzer.ShapeDictionary;
             _classifier = new KNNClassifier(similarityCoefficient, 3);
         }
 
-        public int ShapeGroups {
-            get
+        public Dictionary<double[], Guid> ShapeDictionary
+        {
+            get => _shapeDictionary;
+            set
             {
-                return _shapeDictionary.Values.GroupBy(id => id).Count();
+                _shapeDictionary = value;
+                ShapeCountChange?.Invoke(this, _shapeDictionary.Count);
             }
-                }
-        public Dictionary<double[], Guid> ShapeDictionary { get => _shapeDictionary; internal set => _shapeDictionary = value; }
+        }
 
         public void AddTrainingData(double[] shapeDescriptor, Guid description)
         {
@@ -63,6 +73,7 @@ namespace image_processing.Utilities
             {
                 Guid shapeId = Guid.NewGuid();
                 _shapeDictionary.Add(shapeDescriptor, shapeId);
+                ShapeCountChange?.Invoke(this, _shapeDictionary.Count);
                 return shapeId;
             }
             else
@@ -72,6 +83,7 @@ namespace image_processing.Utilities
                 if (!_shapeDictionary.ContainsValue(shapeId))
                 {
                     _shapeDictionary.Add(shapeDescriptor, shapeId);
+                    ShapeCountChange?.Invoke(this, _shapeDictionary.Count);
                 }
 
                 return shapeId;
