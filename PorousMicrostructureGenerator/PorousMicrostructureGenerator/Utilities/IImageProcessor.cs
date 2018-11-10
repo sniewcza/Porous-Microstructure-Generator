@@ -22,5 +22,6 @@ namespace Generator.Utilities
         List<int> BlobsArea(Bitmap bitmap);
         Bitmap ConvertToGrayscale(Bitmap original);
         Bitmap FilterBloobs(Bitmap bitmap, int minWidth, int minHeight);
+        Bitmap Rescale(Bitmap bitmap, int newWidth, int newHeight);
     }
 }

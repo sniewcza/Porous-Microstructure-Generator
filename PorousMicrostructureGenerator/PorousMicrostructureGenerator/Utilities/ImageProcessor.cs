@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,7 +14,7 @@ namespace Generator.Utilities
 {
     class ImageProcessor : IImageProcessor
     {
-       
+
         public event EventHandler OnProgress;
         public event EventHandler<int> OnStart;
         public event EventHandler OnEnd;
@@ -26,20 +27,26 @@ namespace Generator.Utilities
 
         public Bitmap Closing(Bitmap bitmap)
         {
+            var bmp = ReverseBitmapColors(bitmap);
             Closing filter = new Closing();
-            return filter.Apply(bitmap);
+            filter.ApplyInPlace(bmp);
+            return ReverseBitmapColors(bmp);
         }
 
         public Bitmap Dilatation(Bitmap bitmap)
         {
+            var bmp = ReverseBitmapColors(bitmap);
             Dilatation filter = new Dilatation();
-            return filter.Apply(bitmap);
+            filter.ApplyInPlace(bmp);
+            return ReverseBitmapColors(bmp);
         }
 
         public Bitmap Erosion(Bitmap bitmap)
         {
+            var bmp = ReverseBitmapColors(bitmap);
             Erosion filter = new Erosion();
-            return filter.Apply(bitmap);
+            filter.ApplyInPlace(bmp);
+            return ReverseBitmapColors(bmp);
         }
 
         public List<PoreAnalyzeData> FindShapes(Bitmap bitmap)
@@ -63,8 +70,11 @@ namespace Generator.Utilities
 
         public Bitmap Opening(Bitmap bitmap)
         {
+            var bmp = ReverseBitmapColors(bitmap);
             Opening filter = new Opening();
-            return filter.Apply(bitmap);
+            filter.ApplyInPlace(bmp);
+            return ReverseBitmapColors(bmp);
+
         }
 
         public Bitmap ReverseBitmapColors(Bitmap bitmap)
@@ -91,7 +101,7 @@ namespace Generator.Utilities
 
             return newbmp;
         }
-      
+
         public Bitmap Skeletonization(Bitmap bitmap)
         {
             SimpleSkeletonization filter = new SimpleSkeletonization(255, 0);
@@ -144,8 +154,22 @@ namespace Generator.Utilities
 
         public Bitmap FilterBloobs(Bitmap bitmap, int minWidth, int minHeight)
         {
-            BlobsFiltering filter = new BlobsFiltering(minWidth, minHeight, int.MaxValue, int.MaxValue);           
+            BlobsFiltering filter = new BlobsFiltering(minWidth, minHeight, int.MaxValue, int.MaxValue);
             return ReverseBitmapColors(filter.Apply(ReverseBitmapColors(bitmap)));
+        }
+
+        public Bitmap Rescale(Bitmap bitmap, int newWidth, int newHeight)
+        {
+            Bitmap animage = new Bitmap(newWidth, newHeight);
+            using (Graphics gr = Graphics.FromImage(animage))
+            {
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.DrawImage(bitmap, new Rectangle(0, 0, newWidth, newHeight));
+            }
+            return animage;
         }
     }
 }

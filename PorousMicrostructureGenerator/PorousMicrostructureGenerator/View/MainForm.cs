@@ -271,7 +271,10 @@ namespace Generator
 
                     progressBar.Show();
 
-                    MicrostructureGenerator generator = new MicrostructureGenerator(form.MicrostructureWidth, form.MicrostructureHeight);
+                    //int physicalWidth = Convert.ToInt32(form.MicrostructureWidth * form.Ratio);
+                    //int physicalHeight = Convert.ToInt32(form.MicrostructureHeight * form.Ratio);
+
+                    MicrostructureGenerator generator = new MicrostructureGenerator(form.MicrostructureWidth, form.MicrostructureHeight, 1/form.Ratio, _processor);
                     generator.OnProgress += (s, percentage) =>
                     {
 
@@ -285,9 +288,11 @@ namespace Generator
                     EnableMenu();
                     EnablePictureBox();
 
-                    bmp = _processor.ConvertToGrayscale(bmp);
-                    _image.ViewImage = bmp;
-
+                    int pixelWidth = Convert.ToInt32(form.MicrostructureWidth * 1 / form.Ratio);
+                    int pixelHeight = Convert.ToInt32(form.MicrostructureHeight * 1 / form.Ratio);
+                     bmp = _processor.Rescale(bmp,pixelWidth,pixelHeight); 
+                    var bm2 = _processor.ConvertToGrayscale(bmp);
+                    _image.ViewImage = _processor.Binarization(bm2,127);
                     RescalePictureBox();
                 }
             }
@@ -316,7 +321,7 @@ namespace Generator
             if (form.ShowDialog() == DialogResult.OK)
             {
                 globalSettings.SimilarityCoefficient = form.SimilarityCoefficient;
-                
+
 
                 _shapeAnalyzer = new ShapeAnalyzer(_shapeAnalyzer, globalSettings.SimilarityCoefficient);
 
@@ -350,11 +355,11 @@ namespace Generator
         private async void analyzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (isBinarized)
-            {                
-                
+            {
+
                 progressBar = new GeneratorProgressBar
                 {
-                    Info = "Looking for shapes",                   
+                    Info = "Looking for shapes",
                 };
 
 
@@ -411,12 +416,12 @@ namespace Generator
         }
 
         private Task<List<PoreDto>> AnalyzeShapesAsync(List<PoreAnalyzeData> shapes)
-        {           
+        {
             return Task.Run(() =>
            {
-              
+
                for (int i = 0; i < shapes.Count; i++)
-               {                                    
+               {
                    var shape = shapes[i];
                    var shapeId = _shapeAnalyzer.Analyze(shape.getShapeDescriptor());
                    shape.ShapeId = shapeId;

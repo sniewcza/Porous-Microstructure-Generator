@@ -14,8 +14,12 @@ namespace Generator.Utilities
         private Bitmap _bmp;
         private Random _random;
         private int _numberOfTrials = 5;
-        public MicrostructureGenerator(int width, int height)
+        private IImageProcessor _processor;
+        private readonly double _ratio;
+        public MicrostructureGenerator(int width, int height, double ratio, IImageProcessor processor)
         {
+            _ratio = ratio;
+            _processor = processor;
             _bmp = CreateWhiteBmp(width, height);
             _random = new Random();
         }
@@ -69,6 +73,8 @@ namespace Generator.Utilities
         private bool GenerateBlobs(PoreDto pore, int numberOfTrials)
         {
             pore.PoreImage.RotateFlip((RotateFlipType)_random.Next(0, 8));
+            // int newWidth = Convert.ToInt32(pore.PoreImage.Width * _ratio);
+            // int newHeight = Convert.ToInt32(pore.PoreImage.Height * _ratio);
             var poreImage = pore.PoreImage;
             Rectangle rectangle;
             Point rectangleCenter;
@@ -80,7 +86,7 @@ namespace Generator.Utilities
                 rectangle = new Rectangle(new Point(rectangleCenter.X - poreImage.Width / 2, rectangleCenter.Y - poreImage.Height / 2), new Size(poreImage.Width, poreImage.Height));
                 if (CheckRectangleIsClear(rectangle))
                 {
-                    DrawImage(rectangle, pore.PoreImage);
+                    DrawImage(rectangle, poreImage);
                     return true;
                 }
             }
@@ -99,7 +105,7 @@ namespace Generator.Utilities
         private void DrawImage(Rectangle rectangle, Bitmap image)
         {
             using (var g = Graphics.FromImage(_bmp))
-            {              
+            {
                 g.DrawImage(image, rectangle.Location);
             }
         }

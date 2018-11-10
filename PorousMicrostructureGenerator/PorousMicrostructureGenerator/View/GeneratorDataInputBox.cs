@@ -9,6 +9,7 @@ namespace Generator.View
         public int MicrostructureWidth { get; set; }
         public int MicrostructureHeight { get; set; }
         public double Volume { get; set; }
+        public double Ratio { get; set; }
 
         public GeneratorDataInputBox()
         {
@@ -22,6 +23,7 @@ namespace Generator.View
                 Volume = double.Parse(textBox1.Text);
                 MicrostructureWidth = int.Parse(maskedTextBox1.Text);
                 MicrostructureHeight = int.Parse(maskedTextBox2.Text);
+                Ratio = double.Parse(textBox2.Text);
             }
             catch(Exception ex)
             {

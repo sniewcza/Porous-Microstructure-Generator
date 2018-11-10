@@ -39,7 +39,9 @@ namespace Generator.View
             // histogram
             // 
             this.histogram.AllowSelection = true;
-            this.histogram.Color = System.Drawing.Color.DarkCyan;
+            this.histogram.BackColor = System.Drawing.SystemColors.Control;
+            this.histogram.Color = System.Drawing.Color.OrangeRed;
+            this.histogram.ForeColor = System.Drawing.Color.Transparent;
             this.histogram.Location = new System.Drawing.Point(12, 12);
             this.histogram.Name = "histogram";
             this.histogram.Size = new System.Drawing.Size(281, 195);
@@ -67,7 +69,7 @@ namespace Generator.View
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(193, 224);
+            this.label3.Location = new System.Drawing.Point(184, 224);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 13);
             this.label3.TabIndex = 3;
@@ -76,7 +78,7 @@ namespace Generator.View
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(193, 263);
+            this.label4.Location = new System.Drawing.Point(184, 263);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 4;
