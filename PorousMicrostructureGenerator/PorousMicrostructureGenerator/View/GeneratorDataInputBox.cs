@@ -18,20 +18,27 @@ namespace Generator.View
 
         private void button1_Click(object sender, EventArgs e)
         {
+            bool dataOk = false;
             try
             {
                 Volume = double.Parse(textBox1.Text);
                 MicrostructureWidth = int.Parse(maskedTextBox1.Text);
                 MicrostructureHeight = int.Parse(maskedTextBox2.Text);
                 Ratio = double.Parse(textBox2.Text);
+                dataOk = true;
             }
             catch(Exception ex)
             {
                 MessageBox.Show("Data you provide is invalid!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            if (dataOk)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
         }
+
+       
     }
 }
