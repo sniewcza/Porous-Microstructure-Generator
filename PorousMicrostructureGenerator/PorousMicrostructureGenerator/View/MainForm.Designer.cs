@@ -132,7 +132,6 @@
             this.closingToolStripMenuItem,
             this.skeletonizationToolStripMenuItem,
             this.filterBlobsToolStripMenuItem});
-            this.filtersToolStripMenuItem.Enabled = false;
             this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
             this.filtersToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.filtersToolStripMenuItem.Text = "Filters";

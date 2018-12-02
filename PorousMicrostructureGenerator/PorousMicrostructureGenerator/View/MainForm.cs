@@ -158,7 +158,7 @@ namespace Generator
                 var form = new ThresholdInputBox(_image.OriginalImage);
                 form.ThresholdChanged += (o, threshold) =>
                 {
-                    // int threshold = Convert.ToInt32((textbox as MaskedTextBox).Text);
+                   
                     form.PictureBox1.Image = _processor.Binarization(_image.OriginalImage, threshold);
                 };
                 if (form.ShowDialog() == DialogResult.OK)

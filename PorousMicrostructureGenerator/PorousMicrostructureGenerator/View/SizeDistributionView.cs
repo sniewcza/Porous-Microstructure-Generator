@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -16,11 +18,11 @@ namespace Generator.View
             InitializeComponent();
             grouping = InitializeHistogramData(sizes);
             this.histogram.Values = grouping.Select(g => g.Count()).ToArray();
-            this.histogram.Width = this.histogram.Values.Length+10;
+            this.histogram.Width = this.histogram.Values.Length + 10;
             this.histogram.PositionChanged += Histogram_PositionChanged;
             this.label1.Text = $"Min area: {_minPoreArea}";
             this.label2.Text = $"Max area: {_maxPoreArea}";
-            this.histogram.Refresh();
+            this.label6.Refresh();
         }
 
         private void Histogram_PositionChanged(object sender, AForge.Controls.HistogramEventArgs e)
@@ -55,6 +57,12 @@ namespace Generator.View
             return groups.OrderBy(g => g.Key).ToArray(); ;
         }
 
-
+        private void label6_Paint(object sender, PaintEventArgs e)
+        {
+            string text = "Count";
+            var g = e.Graphics;          
+            g.DrawString(text, new Font("Microsoft Sans Serif", 8), Brushes.Black, 0, 0,
+            new StringFormat(StringFormatFlags.DirectionVertical));
+        }
     }
 }
